@@ -1,12 +1,15 @@
 package com.example.parkinglot;
 
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
@@ -30,6 +33,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
 
     private MapView mapView;
+
+    private static final String TAG = MapFragment.class.getSimpleName();
 
     /**
      * Use this factory method to create a new instance of
@@ -115,5 +120,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 .position(sydney)
                 .title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(this.requireContext(), R.raw.style_json));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style. Error: ", e);
+        }
     }
 }

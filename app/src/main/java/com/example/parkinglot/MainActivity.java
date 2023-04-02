@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager = findViewById(R.id.context);
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getLifecycle()));
 
+        viewPager.setUserInputEnabled(false);
+
         // Give the TabLayout with the ViewPager
         tabLayout = findViewById(R.id.tabLayout);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
