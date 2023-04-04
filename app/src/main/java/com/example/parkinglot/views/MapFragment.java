@@ -1,4 +1,4 @@
-package com.example.parkinglot;
+package com.example.parkinglot.views;
 
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import androidx.lifecycle.ViewModelProvider;
+import com.example.parkinglot.R;
+import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -33,6 +36,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
 
     private MapView mapView;
+
+    private MapViewModel mapViewModel = new MapViewModel();
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -77,6 +82,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
+    public void onViewCreated(View view, Bundle bundle) {
+        super.onViewCreated(view, bundle);
+
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        mapViewModel.doAction();
+        mapViewModel.getData().observe(getViewLifecycleOwner(), latLong -> {
+            LatLng sydney = new LatLng(latLong.getLat(), latLong.getLon());
+            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        });
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mapView.onResume();
@@ -113,13 +131,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        googleMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         try {
             // Customise the styling of the base map using a JSON object defined

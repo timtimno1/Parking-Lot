@@ -1,26 +1,28 @@
-package com.example.parkinglot;
+package com.example.parkinglot.views;
 
-import android.widget.FrameLayout;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+import com.example.parkinglot.R;
+import com.example.parkinglot.utils.Preconditions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
 
     private ViewPager2 viewPager;
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setUserInputEnabled(false);
 
         // Give the TabLayout with the ViewPager
+        // Set the tab text
         tabLayout = findViewById(R.id.tabLayout);
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
@@ -52,10 +55,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attach();
 
-        tabLayout.getTabAt(0).select();
+        // Default select
+        try {
+            Objects.requireNonNull(tabLayout.getTabAt(0)).select();
+        }
+        catch (NullPointerException e) {
+            Log.e(TAG, "TabLayout.getTabAt return null");
+        }
     }
 
-    class PagerAdapter extends FragmentStateAdapter {
+    // inner class
+    private class PagerAdapter extends FragmentStateAdapter {
 
         private FragmentManager fragmentManager;
 
@@ -67,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Preconditions.checkArgument(position < 4 && position >= 0, "Position must between 1 to 4");
             // get the current selected tab's position and replace the fragment accordingly
-            Fragment fragment = null;
+            Fragment fragment;
             switch (position) {
                 case 0:
                     fragment = new MapFragment();
@@ -82,8 +93,11 @@ public class MainActivity extends AppCompatActivity {
                 case 3:
                     fragment = new ContactFragment();
                     break;
+                default:
+                    fragment = null;
+                    break;
             }
-            return fragment;
+            return Objects.requireNonNull(fragment);
         }
 
         @Override

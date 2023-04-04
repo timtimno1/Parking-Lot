@@ -10,11 +10,16 @@ android {
     defaultConfig {
         applicationId "com.example.parkinglot"
         minSdk 29
+        // noinspection OldTargetApi
         targetSdk 32
         versionCode 1
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    dataBinding {
+        enabled = true
     }
 
     buildTypes {
