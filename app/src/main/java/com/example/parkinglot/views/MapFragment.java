@@ -69,8 +69,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.view_map, container, false);
         mapView = view.findViewById(R.id.view_map);
@@ -123,7 +122,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
      * we just add a marker near Sydney, Australia.
-     *
+     * <p>
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
@@ -135,13 +134,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
-            boolean success = googleMap.setMapStyle(
-                    MapStyleOptions.loadRawResourceStyle(this.requireContext(), R.raw.style_json));
+            boolean success = googleMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this.requireContext(), R.raw.style_json));
 
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
             }
-        } catch (Resources.NotFoundException e) {
+        }
+        catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
     }
