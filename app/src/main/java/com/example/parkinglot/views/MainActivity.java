@@ -1,9 +1,12 @@
 package com.example.parkinglot.views;
 
+import android.Manifest;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -22,12 +25,16 @@ public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
 
+    private static final int REQUEST_LOCATION = 1;
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = findViewById(R.id.context);

@@ -1,26 +1,52 @@
 package com.example.parkinglot.views;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import androidx.lifecycle.ViewModelProvider;
 import com.example.parkinglot.R;
 import com.example.parkinglot.viewmodels.MapViewModel;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements
+        GoogleMap.OnMyLocationButtonClickListener,
+        GoogleMap.OnMyLocationClickListener,
+        OnMapReadyCallback {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,6 +64,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     private MapView mapView;
 
     private MapViewModel mapViewModel = new MapViewModel();
+
+    Marker mCurrentLocationMarker;
+
+    LocationRequest mLocationRequest;
+
+    Location lastLocation;
+
+    private FusedLocationProviderClient fusedLocationClient;
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -89,7 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mapViewModel.getData().observe(getViewLifecycleOwner(), latLong -> {
             LatLng sydney = new LatLng(latLong.getLat(), latLong.getLon());
             googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         });
     }
 
@@ -127,6 +161,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
@@ -143,5 +178,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+
+        this.googleMap.setMyLocationEnabled(true);
+        this.googleMap.setOnMyLocationButtonClickListener(this);
+        this.googleMap.setOnMyLocationClickListener(this);
+    }
+
+    @Override
+    public void onMyLocationClick(@NonNull Location location) {
+        Toast.makeText(this.getContext(), "Current location:\n" + location, Toast.LENGTH_LONG)
+                .show();
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this.getContext(), "MyLocation button clicked", Toast.LENGTH_SHORT)
+                .show();
+        // Return false so that we don't consume the event and the default behavior still occurs
+        // (the camera animates to the user's current position).
+        return false;
     }
 }
