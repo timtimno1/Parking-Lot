@@ -1,13 +1,9 @@
 package com.example.parkinglot.views;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -21,22 +17,11 @@ import android.widget.Toast;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.parkinglot.R;
 import com.example.parkinglot.viewmodels.MapViewModel;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.time.Duration;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,14 +49,6 @@ public class MapFragment extends Fragment implements
     private MapView mapView;
 
     private MapViewModel mapViewModel = new MapViewModel();
-
-    Marker mCurrentLocationMarker;
-
-    LocationRequest mLocationRequest;
-
-    Location lastLocation;
-
-    private FusedLocationProviderClient fusedLocationClient;
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -122,7 +99,7 @@ public class MapFragment extends Fragment implements
         mapViewModel.doAction();
         mapViewModel.getData().observe(getViewLifecycleOwner(), latLong -> {
             LatLng sydney = new LatLng(latLong.getLat(), latLong.getLon());
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
 //            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         });
     }
@@ -166,6 +143,10 @@ public class MapFragment extends Fragment implements
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
 
+        CameraUpdate point = CameraUpdateFactory.newLatLngZoom(new LatLng(25.043383, 121.533264), 18.0f);
+        googleMap.moveCamera(point);
+        googleMap.animateCamera(point);
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -182,6 +163,7 @@ public class MapFragment extends Fragment implements
         this.googleMap.setMyLocationEnabled(true);
         this.googleMap.setOnMyLocationButtonClickListener(this);
         this.googleMap.setOnMyLocationClickListener(this);
+
     }
 
     @Override
