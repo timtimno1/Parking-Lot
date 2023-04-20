@@ -1,6 +1,9 @@
 package com.example.parkinglot.dao;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.DeleteTable;
+import androidx.room.Insert;
 import androidx.room.Query;
 import com.example.parkinglot.entity.ParkingLot;
 
@@ -10,4 +13,10 @@ import java.util.List;
 public interface ParkingLotDao {
     @Query("SELECT * FROM parkingLot")
     List<ParkingLot> getAll();
+
+    @Insert
+    void insertAll(ParkingLot parkingLot);
+
+    @Query("DELETE FROM parkingLot")
+    void delete();
 }

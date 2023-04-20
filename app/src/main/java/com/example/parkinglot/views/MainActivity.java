@@ -10,16 +10,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.room.Room;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import com.example.parkinglot.DataBase;
 import com.example.parkinglot.R;
+import com.example.parkinglot.dao.ParkingLotDao;
+import com.example.parkinglot.entity.ParkingLot;
 import com.example.parkinglot.utils.Preconditions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.List;
 import java.util.Objects;
 
 public class  MainActivity extends AppCompatActivity {
+
+    private Thread thread;
 
     private TabLayout tabLayout;
 
@@ -41,6 +49,23 @@ public class  MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getLifecycle()));
 
         viewPager.setUserInputEnabled(false);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                DataBase db = Room.databaseBuilder(getApplicationContext(), DataBase.class, "ParkingLot").build();
+                ParkingLotDao parkingLotDao = db.parkingLotDao();
+                ParkingLot parkingLot = new ParkingLot();
+                parkingLot.numberOfParkingSpace = 4;
+                parkingLot.typeOfParkingLot="ground";
+                parkingLot.openingHours="900";
+                parkingLot.remainingParkingSpace=1;
+                parkingLot.paymentMethod="cash";
+                parkingLot.phoneNumber="092222222";
+                parkingLotDao.insertAll(parkingLot);
+            }
+        }).start();
+
 
         // Give the TabLayout with the ViewPager
         // Set the tab text
