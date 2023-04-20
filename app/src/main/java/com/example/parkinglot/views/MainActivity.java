@@ -17,7 +17,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.parkinglot.DataBase;
 import com.example.parkinglot.R;
 import com.example.parkinglot.dao.ParkingLotDao;
+import com.example.parkinglot.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLot;
+import com.example.parkinglot.entity.TdxToken;
 import com.example.parkinglot.utils.Preconditions;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -27,7 +29,7 @@ import java.util.Objects;
 
 public class  MainActivity extends AppCompatActivity {
 
-    private Thread thread;
+    private DataBase db;
 
     private TabLayout tabLayout;
 
@@ -50,10 +52,11 @@ public class  MainActivity extends AppCompatActivity {
 
         viewPager.setUserInputEnabled(false);
 
+        db = Room.databaseBuilder(getApplicationContext(), DataBase.class, "ParkingLot").build();
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                DataBase db = Room.databaseBuilder(getApplicationContext(), DataBase.class, "ParkingLot").build();
                 ParkingLotDao parkingLotDao = db.parkingLotDao();
                 ParkingLot parkingLot = new ParkingLot();
                 parkingLot.numberOfParkingSpace = 4;
@@ -63,6 +66,17 @@ public class  MainActivity extends AppCompatActivity {
                 parkingLot.paymentMethod="cash";
                 parkingLot.phoneNumber="092222222";
                 parkingLotDao.insertAll(parkingLot);
+
+                TdxTokenDao tdxTokenDao = db.tdxTokenDao();
+                if(tdxTokenDao.getCount() == 0) {
+                    TdxToken tdxToken = new TdxToken();
+                    tdxToken.tdxToken = "First";
+                    tdxTokenDao.insertToken(tdxToken);
+                }
+                else {
+
+                    tdxTokenDao.updateToken("Second");
+                }
             }
         }).start();
 

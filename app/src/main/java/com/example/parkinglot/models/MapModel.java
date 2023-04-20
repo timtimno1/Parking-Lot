@@ -9,8 +9,7 @@ public class MapModel {
 
     // Simulate getting park-lot data from backend
     public void retrieveParkingLotData(final OnParkingLotDataCallBack onParkingLotDataCallBack) {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            onParkingLotDataCallBack.onParkingLotDataReady(new LatLong(-34, 151));
-        }, 5500);
+
     }
+
 }
