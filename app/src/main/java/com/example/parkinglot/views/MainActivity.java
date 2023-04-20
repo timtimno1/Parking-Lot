@@ -14,7 +14,7 @@ import androidx.room.Room;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.parkinglot.DataBase;
+import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.dao.TdxTokenDao;
@@ -29,7 +29,7 @@ import java.util.Objects;
 
 public class  MainActivity extends AppCompatActivity {
 
-    private DataBase db;
+    private ParkingLotDataBase db;
 
     private TabLayout tabLayout;
 
@@ -52,7 +52,7 @@ public class  MainActivity extends AppCompatActivity {
 
         viewPager.setUserInputEnabled(false);
 
-        db = Room.databaseBuilder(getApplicationContext(), DataBase.class, "ParkingLot").build();
+        db = Room.databaseBuilder(getApplicationContext(), ParkingLotDataBase.class, "ParkingLot").build();
 
         new Thread(new Runnable() {
             @Override

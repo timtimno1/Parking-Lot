@@ -9,7 +9,7 @@ import com.example.parkinglot.entity.ParkingLot;
 import com.example.parkinglot.entity.TdxToken;
 
 @Database(entities = {ParkingLot.class, TdxToken.class}, version = 1)
-public abstract class DataBase extends RoomDatabase {
+public abstract class ParkingLotDataBase extends RoomDatabase {
     public abstract ParkingLotDao parkingLotDao();
 
     public abstract TdxTokenDao tdxTokenDao();
