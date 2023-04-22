@@ -1,6 +1,7 @@
 package com.example.parkinglot.views;
 
 import android.Manifest;
+import android.content.Context;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.room.Room;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -21,19 +23,28 @@ import com.example.parkinglot.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLot;
 import com.example.parkinglot.entity.TdxToken;
 import com.example.parkinglot.utils.Preconditions;
+import com.example.parkinglot.viewmodels.MainActivityViewModel;
+import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import org.json.JSONObject;
 
-import java.util.List;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class  MainActivity extends AppCompatActivity {
 
-    private ParkingLotDataBase db;
+    private static Context applicationContextInstance = null;
 
     private TabLayout tabLayout;
 
     private ViewPager2 viewPager;
+
+    private MainActivityViewModel mainActivityViewModel;
 
     private static final int REQUEST_LOCATION = 1;
 
@@ -46,40 +57,15 @@ public class  MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
+        MainActivity.applicationContextInstance = getApplicationContext();
+
+        mainActivityViewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = findViewById(R.id.context);
         viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getLifecycle()));
 
         viewPager.setUserInputEnabled(false);
-
-        db = Room.databaseBuilder(getApplicationContext(), ParkingLotDataBase.class, "ParkingLot").build();
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ParkingLotDao parkingLotDao = db.parkingLotDao();
-                ParkingLot parkingLot = new ParkingLot();
-                parkingLot.numberOfParkingSpace = 4;
-                parkingLot.typeOfParkingLot="ground";
-                parkingLot.openingHours="900";
-                parkingLot.remainingParkingSpace=1;
-                parkingLot.paymentMethod="cash";
-                parkingLot.phoneNumber="092222222";
-                parkingLotDao.insertAll(parkingLot);
-
-                TdxTokenDao tdxTokenDao = db.tdxTokenDao();
-                if(tdxTokenDao.getCount() == 0) {
-                    TdxToken tdxToken = new TdxToken();
-                    tdxToken.tdxToken = "First";
-                    tdxTokenDao.insertToken(tdxToken);
-                }
-                else {
-
-                    tdxTokenDao.updateToken("Second");
-                }
-            }
-        }).start();
-
 
         // Give the TabLayout with the ViewPager
         // Set the tab text
@@ -108,6 +94,8 @@ public class  MainActivity extends AppCompatActivity {
         catch (NullPointerException e) {
             Log.e(TAG, "TabLayout.getTabAt return null");
         }
+
+        mainActivityViewModel.doCheck();
     }
 
     // inner class
@@ -150,5 +138,12 @@ public class  MainActivity extends AppCompatActivity {
         public int getItemCount() {
             return 4;
         }
+    }
+
+    public static Context getApplicationContextInstance() {
+        if(MainActivity.applicationContextInstance == null )
+            throw new NullPointerException("ApplicationContext is null");
+        else
+            return MainActivity.applicationContextInstance;
     }
 }

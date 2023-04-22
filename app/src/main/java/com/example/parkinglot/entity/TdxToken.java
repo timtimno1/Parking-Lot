@@ -13,4 +13,9 @@ public class TdxToken {
 
     @ColumnInfo(name = "tdxToken")
     public String tdxToken ;
+
+    public TdxToken setTdxToken(String tdxToken) {
+        this.tdxToken = tdxToken;
+        return this;
+    }
 }
