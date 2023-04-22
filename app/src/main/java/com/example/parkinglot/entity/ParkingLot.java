@@ -15,15 +15,24 @@ public class ParkingLot {
     @ColumnInfo(name = "phoneNumber")
     public String phoneNumber;
 
-    @ColumnInfo(name = "openingHours")
-    public String openingHours;
-
-    @ColumnInfo(name = "paymentMethod")
-    public String paymentMethod;
-
     @ColumnInfo(name = "remainingParkingSpace")
     public int remainingParkingSpace;
 
-    @ColumnInfo(name = "typeOfParkingLot")
-    public String typeOfParkingLot;
+    @ColumnInfo(name = "parkingLotName")
+    public String parkingLotName;
+
+    @ColumnInfo(name = "carParkID")
+    public String carParkID;
+
+    @ColumnInfo(name = "address")
+    public String address;
+
+    @ColumnInfo(name = "fareDescription")
+    public String fareDescription;
+
+    @ColumnInfo(name = "latitude")
+    public double latitude;
+
+    @ColumnInfo(name = "longitude")
+    public double longitude;
 }
