@@ -20,19 +20,39 @@ import java.util.NoSuchElementException;
 public class TdxModel {
 
     public String getCityPhonePrefix(String city) {
-        if(city == "Taipei" || city == "Keelung") return "02";
-        else if(city == "Taoyuan" || city == "Hsinchu" || city == "HualienCounty" || city=="YilanCounty") return "03";
-        else if(city == "MiaoliCounty") return "037";
-        else if(city == "Taichung") return "04";
-        else if(city == "NantouCounty") return "049";
-        else if(city == "Chiayi" || city == "ChiayiCounty") return "05";
-        else if(city == "Tainan") return "06";
-        else if(city == "Kaohsiung") return "07";
-        else if(city == "PingtungCounty") return "08";
-        else if(city == "TaitungCounty") return "089";
-        else if(city == "KinmenCounty") return "082";
-        else if(city == "LianjiangCounty") return "0836";
-        throw new IllegalArgumentException();
+        switch (city) {
+            case "Taipei":
+            case "Keelung":
+                return "02";
+            case "Taoyuan":
+            case "Hsinchu":
+            case "HualienCounty":
+            case "YilanCounty":
+                return "03";
+            case "MiaoliCounty":
+                return "037";
+            case "Taichung":
+                return "04";
+            case "NantouCounty":
+                return "049";
+            case "Chiayi":
+            case "ChiayiCounty":
+                return "05";
+            case "Tainan":
+                return "06";
+            case "Kaohsiung":
+                return "07";
+            case "PingtungCounty":
+                return "08";
+            case "TaitungCounty":
+                return "089";
+            case "KinmenCounty":
+                return "082";
+            case "LianjiangCounty":
+                return "0836";
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     public void updateTdxToken() {
