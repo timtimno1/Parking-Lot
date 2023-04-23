@@ -84,7 +84,7 @@ public class TdxModel {
                 ParkingLotDataBase db = ParkingLotDataBase.getInstance();
                 TdxTokenDao tdxTokenDao = db.tdxTokenDao();
                 try {
-                    if(tdxTokenDao.getCount() == 0)
+                    if (tdxTokenDao.getCount() == 0)
                         tdxTokenDao.insertToken(new TdxToken().setTdxToken(new JSONObject(response).getString("access_token")));
                     else
                         tdxTokenDao.updateToken(new JSONObject(response).getString("access_token"));
@@ -102,7 +102,7 @@ public class TdxModel {
         new Thread(() -> {
             ParkingLotDataBase db = ParkingLotDataBase.getInstance();
             TdxTokenDao tdxTokenDao = db.tdxTokenDao();
-            if(tdxTokenDao.getCount() == 0) {
+            if (tdxTokenDao.getCount() == 0) {
                 updateTdxToken();
             }
         }).start();
@@ -115,7 +115,7 @@ public class TdxModel {
         // TODO handling the try catch
         HttpRequest httpRequest;
         try {
-            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/City/"+ City + "?%24select=CarParkName%2C%20CarParkPosition%2C%20Address%2C%20FareDescription%2C%20CarParkID%2C%20CarParkName%2C%20EmergencyPhone&%24top=1&%24count=false&%24format=JSON"));
+            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/City/" + City + "?%24select=CarParkName%2C%20CarParkPosition%2C%20Address%2C%20FareDescription%2C%20CarParkID%2C%20CarParkName%2C%20EmergencyPhone&%24top=1&%24count=false&%24format=JSON"));
             httpRequest.setRequestMethod("GET");
         }
         catch (ProtocolException e) {
@@ -130,7 +130,7 @@ public class TdxModel {
 
         Map<String, String> headerData = new HashMap<>();
         headerData.put("accept", "application/json");
-        headerData.put("Authorization", "Bearer "+ token);
+        headerData.put("Authorization", "Bearer " + token);
 
         httpRequest.request((int httpCode, String response) -> {
             new Thread(() -> {
