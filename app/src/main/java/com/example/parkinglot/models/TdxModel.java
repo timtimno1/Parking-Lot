@@ -1,11 +1,16 @@
 package com.example.parkinglot.models;
 
+import android.util.Log;
+import android.widget.Toast;
 import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLot;
 import com.example.parkinglot.entity.TdxToken;
 import com.example.parkinglot.utils.HttpRequest;
+import com.example.parkinglot.viewmodels.callback.OnParkingLotSyncCallBack;
+import com.example.parkinglot.views.MainActivity;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -15,9 +20,10 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class TdxModel {
+    private String TAG = TdxModel.class.getSimpleName();
 
     public String getCityPhonePrefix(String city) {
         switch (city) {
@@ -56,7 +62,6 @@ public class TdxModel {
     }
 
     public void updateTdxToken() {
-
         // TODO handling the try catch
         HttpRequest httpRequest;
         try {
@@ -108,53 +113,74 @@ public class TdxModel {
         }).start();
     }
 
-    public void syncTDXParkingLotData(String City) {
-        String token = ParkingLotDataBase.getInstance().tdxTokenDao().getToken().tdxToken;
-        ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
-        ParkingLot parkingLot = new ParkingLot();
-        // TODO handling the try catch
-        HttpRequest httpRequest;
-        try {
-            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/City/" + City + "?%24select=CarParkName%2C%20CarParkPosition%2C%20Address%2C%20FareDescription%2C%20CarParkID%2C%20CarParkName%2C%20EmergencyPhone&%24top=1&%24count=false&%24format=JSON"));
-            httpRequest.setRequestMethod("GET");
-        }
-        catch (ProtocolException e) {
-            throw new RuntimeException(e);
-        }
-        catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+    public void syncTDXParkingLotData(OnParkingLotSyncCallBack callBack, String City) {
+        new Thread(() -> {
+            String token = ParkingLotDataBase.getInstance().tdxTokenDao().getToken().tdxToken;
+            ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
+            ParkingLot parkingLot = new ParkingLot();
+            // TODO handling the try catch
+            HttpRequest httpRequest;
+            try {
+                httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/City/" + City + "?$select=CarParkName, CarParkPosition, Address, FareDescription, CarParkID, CarParkName, EmergencyPhone&$count=true&$format=JSON"));
+                httpRequest.setRequestMethod("GET");
+            }
+            catch (ProtocolException e) {
+                Log.e(TAG, e.toString());
+                callBack.onSyncMessageReady(false, "Sync Parking Lot error throw the ProtocolException");
+                return;
+            }
+            catch (MalformedURLException e) {
+                Log.e(TAG, e.toString());
+                callBack.onSyncMessageReady(false, "Sync Parking Lot error throw the MalformedURLException");
+                return;
+            }
+            catch (IOException e) {
+                Log.e(TAG, e.toString());
+                callBack.onSyncMessageReady(false, "Sync Parking Lot error throw the IOException");
+                return;
+            }
 
-        Map<String, String> headerData = new HashMap<>();
-        headerData.put("accept", "application/json");
-        headerData.put("Authorization", "Bearer " + token);
+            Map<String, String> headerData = new HashMap<>();
+            headerData.put("accept", "application/json");
+            headerData.put("Authorization", "Bearer " + token);
 
-        httpRequest.request((int httpCode, String response) -> {
-            new Thread(() -> {
+            httpRequest.setHeader(headerData);
+            httpRequest.request((int httpCode, String response) -> {
                 try {
+                    parkingLotDao.delete();
+
                     JSONObject data = new JSONObject(response);
-                    parkingLot.carParkID = data.getJSONArray("CarParks").getJSONObject(0).getString("CarParkID");
-                    parkingLot.parkingLotName = data.getJSONArray("CarParks").getJSONObject(0).getJSONObject("CarParkName").getString("Zh_tw");
-                    parkingLot.address = data.getJSONArray("CarParks").getJSONObject(0).getString("Address");
-                    parkingLot.fareDescription = data.getJSONArray("CarParks").getJSONObject(0).getString("FareDescription");
-                    parkingLot.longitude = data.getJSONArray("CarParks").getJSONObject(0).getJSONObject("CarParkPosition").getDouble("PositionLon");
-                    parkingLot.latitude = data.getJSONArray("CarParks").getJSONObject(0).getJSONObject("CarParkPosition").getDouble("PositionLat");
-                    parkingLot.phoneNumber = "" + data.getJSONArray("CarParks").getJSONObject(0).getString("EmergencyPhone");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    JSONArray carParks = data.getJSONArray("CarParks");
+                    for (int i = 0; i < carParks.length(); i++) {
+                        // TODO 檢查資料正確性
+                        JSONObject carPark = carParks.getJSONObject(i);
+                        parkingLot.carParkID = carPark.getString("CarParkID");
+                        parkingLot.parkingLotName = carPark.getJSONObject("CarParkName").getString("Zh_tw");
+                        parkingLot.address = carPark.getString("Address");
+                        parkingLot.fareDescription = carPark.getString("FareDescription");
+                        parkingLot.longitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLon");
+                        parkingLot.latitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLat");
+                        parkingLot.phoneNumber = /*getCityPhonePrefix(City) + */ (carPark.has("EmergencyPhone") ? carPark.getString("EmergencyPhone") : "");
+                        parkingLotDao.insertAll(parkingLot); // TODO 每次都Insert嗎? 如果已經存在呢?
+                    }
+                    Log.d("TdxModel", "Http code: " + httpCode + ", Sync success");
+                    callBack.onSyncMessageReady(true, "Sync success");
                 }
-
-            }).start();
-        }, (int httpCode, String errorMessage) -> {
-
-        });
-
-    }
-
-    public void getDatabaseData() {
-
+                catch (JSONException e) {
+                    Log.e(TAG, "Sync Parking Lot error throw the JSONException, Error: " + e);
+                    callBack.onSyncMessageReady(false, "JSON: " + e);
+                }
+            }, (int httpCode, String errorMessage) -> {
+                if (httpCode == 401 && errorMessage.equals("invalid token")) {
+                    // TODO 若updateTdxToken失敗可能造成無限迴圈
+                    updateTdxToken();
+                    syncTDXParkingLotData(callBack, City);
+//                    Toast.makeText(MainActivity.getApplicationContextInstance(), "Updated TDX Token", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    callBack.onSyncMessageReady(false, "Http code: " + httpCode + ", Error message: " + errorMessage);
+                }
+            });
+        }).start();
     }
 }
