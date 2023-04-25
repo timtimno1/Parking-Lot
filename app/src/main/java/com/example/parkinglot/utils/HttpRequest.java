@@ -74,10 +74,10 @@ public class HttpRequest {
                 }
 
                 if (connection.getResponseCode() == 200) {
-                    successCallBack.callBack(connection.getResponseCode(), readeResponse());
+                    successCallBack.callBack(connection.getResponseCode(), readeResponse(connection.getResponseCode()));
                 }
                 else {
-                    failCallBack.callBack(connection.getResponseCode(), readeResponse());
+                    failCallBack.callBack(connection.getResponseCode(), readeResponse(connection.getResponseCode()));
                 }
             }
             catch (IOException ioException) {
@@ -121,8 +121,12 @@ public class HttpRequest {
         void callBack(int httpCode, String errorMessage);
     }
 
-    private String readeResponse() throws IOException {
-        InputStream inputStream = connection.getInputStream();
+    private String readeResponse(int httpCode) throws IOException {
+        InputStream inputStream;
+        if(httpCode == 200)
+            inputStream = connection.getInputStream();
+        else
+            inputStream = connection.getErrorStream();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
         StringBuilder response = new StringBuilder();
