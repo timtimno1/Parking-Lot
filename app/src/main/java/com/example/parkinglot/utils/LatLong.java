@@ -1,5 +1,7 @@
 package com.example.parkinglot.utils;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * A lat, long pair (WGS84). Immutable.
  */
@@ -60,4 +62,7 @@ public class LatLong {
         return builder.toString();
     }
 
+    public LatLng convertToLatLng() {
+        return new LatLng(lat, lon);
+    }
 }
