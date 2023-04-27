@@ -189,6 +189,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         return false;
     }
 
+    /**
+     *
+     *   Handles the click event for the sync button.
+     *
+     *   @param view The view that was clicked.
+     */
     @Override
     public void onClick(View view) {
         mapViewModel.doSync();
