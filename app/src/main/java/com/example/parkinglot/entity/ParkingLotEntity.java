@@ -5,7 +5,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName="parkingLot")
-public class ParkingLot {
+public class ParkingLotEntity {
     @PrimaryKey(autoGenerate = true)
     public int id;
 

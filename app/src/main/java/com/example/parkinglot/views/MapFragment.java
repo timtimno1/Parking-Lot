@@ -11,8 +11,6 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +19,7 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 import com.example.parkinglot.R;
-import com.example.parkinglot.entity.ParkingLot;
+import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
@@ -31,7 +29,6 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -204,11 +201,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         Log.d("BUTTONS", "User tapped the sync");
     }
 
-    private void addMarkerToMap(List<ParkingLot> parkingLots) {
+    private void addMarkerToMap(List<ParkingLotEntity> parkingLotEntities) {
         // TODO 刪除重複的marker
         clusterManager.clearItems();
-        for (ParkingLot parkingLot : parkingLots) {
-            clusterManager.addItem(new MyItem(parkingLot.latitude, parkingLot.longitude, parkingLot.parkingLotName, parkingLot.phoneNumber));
+        for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
+            clusterManager.addItem(new MyItem(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
 //            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
         }
         clusterManager.setRenderer(new MarkerClusterRenderer(this.getContext(), googleMap, clusterManager));

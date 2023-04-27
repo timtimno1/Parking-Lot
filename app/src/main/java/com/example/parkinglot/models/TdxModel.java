@@ -1,15 +1,13 @@
 package com.example.parkinglot.models;
 
 import android.util.Log;
-import android.widget.Toast;
 import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.dao.TdxTokenDao;
-import com.example.parkinglot.entity.ParkingLot;
-import com.example.parkinglot.entity.TdxToken;
+import com.example.parkinglot.entity.ParkingLotEntity;
+import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.utils.HttpRequest;
 import com.example.parkinglot.viewmodels.callback.OnParkingLotSyncCallBack;
-import com.example.parkinglot.views.MainActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,7 +18,6 @@ import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TdxModel {
     private String TAG = TdxModel.class.getSimpleName();
@@ -90,7 +87,7 @@ public class TdxModel {
                 TdxTokenDao tdxTokenDao = db.tdxTokenDao();
                 try {
                     if (tdxTokenDao.getCount() == 0)
-                        tdxTokenDao.insertToken(new TdxToken().setTdxToken(new JSONObject(response).getString("access_token")));
+                        tdxTokenDao.insertToken(new TdxTokenEntity().setTdxToken(new JSONObject(response).getString("access_token")));
                     else
                         tdxTokenDao.updateToken(new JSONObject(response).getString("access_token"));
                 }
@@ -117,7 +114,7 @@ public class TdxModel {
         new Thread(() -> {
             String token = ParkingLotDataBase.getInstance().tdxTokenDao().getToken().tdxToken;
             ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
-            ParkingLot parkingLot = new ParkingLot();
+            ParkingLotEntity parkingLotEntity = new ParkingLotEntity();
             // TODO handling the try catch
             HttpRequest httpRequest;
             try {
@@ -154,14 +151,14 @@ public class TdxModel {
                     for (int i = 0; i < carParks.length(); i++) {
                         // TODO 檢查資料正確性
                         JSONObject carPark = carParks.getJSONObject(i);
-                        parkingLot.carParkID = carPark.getString("CarParkID");
-                        parkingLot.parkingLotName = carPark.getJSONObject("CarParkName").getString("Zh_tw");
-                        parkingLot.address = carPark.getString("Address");
-                        parkingLot.fareDescription = carPark.getString("FareDescription");
-                        parkingLot.longitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLon");
-                        parkingLot.latitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLat");
-                        parkingLot.phoneNumber = /*getCityPhonePrefix(City) + */ (carPark.has("EmergencyPhone") ? carPark.getString("EmergencyPhone") : "");
-                        parkingLotDao.insertAll(parkingLot); // TODO 每次都Insert嗎? 如果已經存在呢?
+                        parkingLotEntity.carParkID = carPark.getString("CarParkID");
+                        parkingLotEntity.parkingLotName = carPark.getJSONObject("CarParkName").getString("Zh_tw");
+                        parkingLotEntity.address = carPark.getString("Address");
+                        parkingLotEntity.fareDescription = carPark.getString("FareDescription");
+                        parkingLotEntity.longitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLon");
+                        parkingLotEntity.latitude = carPark.getJSONObject("CarParkPosition").getDouble("PositionLat");
+                        parkingLotEntity.phoneNumber = /*getCityPhonePrefix(City) + */ (carPark.has("EmergencyPhone") ? carPark.getString("EmergencyPhone") : "");
+                        parkingLotDao.insertAll(parkingLotEntity); // TODO 每次都Insert嗎? 如果已經存在呢?
                     }
                     Log.d("TdxModel", "Http code: " + httpCode + ", Sync success");
                     callBack.onSyncMessageReady(true, "Sync success");

@@ -3,7 +3,7 @@ package com.example.parkinglot.viewmodels;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.example.parkinglot.entity.ParkingLot;
+import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.models.MapModel;
 import com.example.parkinglot.models.TdxModel;
 
@@ -15,13 +15,13 @@ public class MapViewModel extends ViewModel {
 
     private final TdxModel tdxModel = new TdxModel();
 
-    private final MutableLiveData<List<ParkingLot>> parkingLots = new MutableLiveData<>();
+    private final MutableLiveData<List<ParkingLotEntity>> parkingLots = new MutableLiveData<>();
 
     private final MutableLiveData<String> syncMessage = new MutableLiveData<>();
 
     private final MutableLiveData<Boolean> success = new MutableLiveData<>();
 
-    public LiveData<List<ParkingLot>> getData() {
+    public LiveData<List<ParkingLotEntity>> getData() {
         return parkingLots;
     }
 

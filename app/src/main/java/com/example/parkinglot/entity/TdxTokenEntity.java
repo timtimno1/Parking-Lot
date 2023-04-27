@@ -1,12 +1,11 @@
 package com.example.parkinglot.entity;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName="tdxToken")
-public class TdxToken {
+public class TdxTokenEntity {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
@@ -14,7 +13,7 @@ public class TdxToken {
     @ColumnInfo(name = "tdxToken")
     public String tdxToken ;
 
-    public TdxToken setTdxToken(String tdxToken) {
+    public TdxTokenEntity setTdxToken(String tdxToken) {
         this.tdxToken = tdxToken;
         return this;
     }

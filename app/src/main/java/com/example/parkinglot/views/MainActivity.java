@@ -12,28 +12,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.room.Room;
 import androidx.viewpager2.widget.ViewPager2;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
-import com.example.parkinglot.dao.ParkingLotDao;
-import com.example.parkinglot.dao.TdxTokenDao;
-import com.example.parkinglot.entity.ParkingLot;
-import com.example.parkinglot.entity.TdxToken;
 import com.example.parkinglot.utils.Preconditions;
 import com.example.parkinglot.viewmodels.MainActivityViewModel;
-import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
-import org.json.JSONObject;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public class  MainActivity extends AppCompatActivity {

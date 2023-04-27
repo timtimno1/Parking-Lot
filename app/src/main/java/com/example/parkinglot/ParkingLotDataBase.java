@@ -6,11 +6,11 @@ import androidx.room.RoomDatabase;
 
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.dao.TdxTokenDao;
-import com.example.parkinglot.entity.ParkingLot;
-import com.example.parkinglot.entity.TdxToken;
+import com.example.parkinglot.entity.ParkingLotEntity;
+import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.views.MainActivity;
 
-@Database(entities = {ParkingLot.class, TdxToken.class}, version = 2)
+@Database(entities = {ParkingLotEntity.class, TdxTokenEntity.class}, version = 2)
 public abstract class ParkingLotDataBase extends RoomDatabase {
     private static ParkingLotDataBase instance = null;
 
