@@ -129,27 +129,44 @@ public class TdxModel {
     }
 
     public void syncTDXParkingLotData(OnParkingLotSyncCallBack callBack) {
-        ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
-        parkingLotDao.delete();
-        List<Thread> threads = new ArrayList<>();
+        new Thread(() -> {
+            ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
+            parkingLotDao.delete();
+            List<Thread> threads = new ArrayList<>();
+            List<GetTDXParkingLotDataRunnable> getTDXParkingLotDataRunnables = new ArrayList<>();
+            String result = "";
+            boolean success = true;
 
-        for(TdxModel.Citys city : TdxModel.Citys.values()) {
-            threads.add(new Thread(new GetTDXParkingLotDataRunnable(city.toString())));
-        }
-
-        for(Thread thread : threads) {
-            thread.start();
-        }
-
-        try {
-            for(Thread thread : threads) {
-                thread.join();
+            for(TdxModel.Citys city : TdxModel.Citys.values()) {
+                GetTDXParkingLotDataRunnable getTDXParkingLotDataRunnable = new GetTDXParkingLotDataRunnable(city.toString());
+                getTDXParkingLotDataRunnables.add(getTDXParkingLotDataRunnable);
+                threads.add(new Thread(getTDXParkingLotDataRunnable));
             }
-        } catch (InterruptedException interruptedException) {
-            callBack.onSyncMessageReady(false,"interruptedException");
-        }
 
+            for(Thread thread : threads) {
+                thread.start();
+            }
 
+            try {
+                for(Thread thread : threads) {
+                    thread.join();
+                }
+            } catch (InterruptedException interruptedException) {
+                callBack.onSyncMessageReady(false,"interruptedException");
+            }
+
+            for(GetTDXParkingLotDataRunnable getTDXParkingLotDataRunnable : getTDXParkingLotDataRunnables) {
+                if(getTDXParkingLotDataRunnable.isSuccess() && getTDXParkingLotDataRunnable.getHttpCode() == 200) {
+                    result += getTDXParkingLotDataRunnable.getCity() + ": " + getTDXParkingLotDataRunnable.getMessage() + "\n";
+                }
+                else {
+                    result += getTDXParkingLotDataRunnable.getCity() + ": " + getTDXParkingLotDataRunnable.getMessage() + "\n";
+                    success = false;
+                }
+            }
+
+            callBack.onSyncMessageReady(success, result);
+        }).start();
     }
 }
 
@@ -241,6 +258,10 @@ class GetTDXParkingLotDataRunnable implements Runnable {
 
     public boolean isSuccess() {
         return success;
+    }
+
+    public String getCity() {
+        return city;
     }
 
     public String getMessage() {
