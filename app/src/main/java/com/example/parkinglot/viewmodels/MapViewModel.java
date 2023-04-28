@@ -37,6 +37,6 @@ public class MapViewModel extends ViewModel {
         tdxModel.syncTDXParkingLotData((success, message) -> {
             // TODO 回傳success變數
             syncMessage.postValue(message);
-        }, "Taoyuan");
+        });
     }
 }

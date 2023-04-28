@@ -28,14 +28,18 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener {
+public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener/*, GoogleMap.OnInfoWindowClickListener*/ {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -53,6 +57,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
     private ClusterManager<MyItem> clusterManager;
 
     private MapView mapView;
+
+    private Map<String, ParkingLotEntity> parkingLotEntitys;
 
     private MapViewModel mapViewModel = new MapViewModel();
 
@@ -174,6 +180,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         mapViewModel.doAction();
         mapViewModel.getData().observe(getViewLifecycleOwner(), this::addMarkerToMap);
         setUpClusterer();
+
+        // Set a listener for info window events.
+
+//        googleMap.setOnInfoWindowClickListener(this);
     }
 
     @Override
@@ -212,10 +222,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         clusterManager.clearItems();
         for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
             clusterManager.addItem(new MyItem(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
-//            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
+            //            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
         }
         clusterManager.setRenderer(new MarkerClusterRenderer(this.getContext(), googleMap, clusterManager));
         clusterManager.cluster();
+
+        // convert list to hashMap
+//        this.parkingLotEntitys = parkingLotEntities.stream()
+//                .collect(Collectors.toMap(ParkingLotEntity::getCarParkID, Function.identity()));
     }
 
     @SuppressLint("PotentialBehaviorOverride")
@@ -228,6 +242,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         googleMap.setOnCameraIdleListener(clusterManager);
         googleMap.setOnMarkerClickListener(clusterManager);
     }
+
+//    @Override
+//    public void onInfoWindowClick(Marker marker) {
+//        Toast.makeText(this.requireContext(), parkingLotEntitys.get(marker.getTitle()).fareDescription, Toast.LENGTH_SHORT).show();
+//    }
 
     public class MyItem implements ClusterItem {
         private final LatLng position;
