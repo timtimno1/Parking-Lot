@@ -1,6 +1,7 @@
 package com.example.parkinglot.utils;
 
 import java.io.IOException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -94,6 +95,34 @@ public class HttpRequestTest {
     }
     @Test
     public void setRequestMethod() {
+        CountDownLatch latch = new CountDownLatch(1);
+        HttpRequest httpRequest = null;
+        try {
+            httpRequest = new HttpRequest(new URL("https://httpbin.org/post"));
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e + "Throw IOException");
+        }
+        try {
+            httpRequest.setRequestMethod("POST");
+        }
+        catch (ProtocolException e) {
+            throw new RuntimeException(e);
+        }
+
+        httpRequest.request((int httpCode, String response) -> {
+            latch.countDown();
+            assertTrue(true);
+        }, (int httpCode, String errorMessage) -> {
+            latch.countDown();
+            fail();
+        });
+        try {
+            latch.await();
+        }
+        catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
