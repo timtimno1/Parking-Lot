@@ -133,4 +133,8 @@ public class  MainActivity extends AppCompatActivity {
         else
             return MainActivity.applicationContextInstance;
     }
+
+    public static void setApplicationContextInstance(Context applicationContextInstance) {
+        MainActivity.applicationContextInstance = applicationContextInstance;
+    }
 }
