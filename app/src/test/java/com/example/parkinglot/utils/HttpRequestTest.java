@@ -16,7 +16,7 @@ public class HttpRequestTest {
 
     @Test
     public void setHeader() {
-        HttpRequest httpRequest = null;
+        HttpRequest httpRequest;
         try {
             httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"));
         }
@@ -31,7 +31,7 @@ public class HttpRequestTest {
 
     @Test
     public void setBodyData() {
-        HttpRequest httpRequest = null;
+        HttpRequest httpRequest;
         try {
             httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"));
         }
@@ -47,7 +47,7 @@ public class HttpRequestTest {
     @Test
     public void requestSuccess() {
         CountDownLatch latch = new CountDownLatch(1);
-        HttpRequest httpRequest = null;
+        HttpRequest httpRequest;
         try {
             httpRequest = new HttpRequest(new URL("https://google.com/"));
         }
@@ -72,7 +72,7 @@ public class HttpRequestTest {
     @Test
     public void requestFail() {
         CountDownLatch latch = new CountDownLatch(1);
-        HttpRequest httpRequest = null;
+        HttpRequest httpRequest;
         try {
             httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"));
         }
@@ -96,7 +96,7 @@ public class HttpRequestTest {
     @Test
     public void setRequestMethod() {
         CountDownLatch latch = new CountDownLatch(1);
-        HttpRequest httpRequest = null;
+        HttpRequest httpRequest;
         try {
             httpRequest = new HttpRequest(new URL("https://httpbin.org/post"));
         }
