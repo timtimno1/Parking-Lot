@@ -40,12 +40,33 @@ public class HttpRequest {
     }
 
     /**
+     *
+     *   Returns a Map of the body data associated with this request.
+     *
+     *   @return A Map of the body data associated with this request.
+     */
+    public Map<String, String> getBodyData() {
+        return this.bodyData;
+    }
+
+    /**
      * Sets the body data for the request
      *
      * @param bodyData A map of key-value pairs to be set as the body data
      */
     public void setBodyData(Map<String, String> bodyData) {
         this.bodyData = bodyData;
+    }
+
+
+    /**
+     *
+     *   Returns the header data of the request.
+     *
+     *   @return A {@link Map} containing the header data of the request.
+     */
+    public Map<String, String> getHeaderData() {
+        return this.headerData;
     }
 
     /**
