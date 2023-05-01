@@ -144,7 +144,7 @@ public class TdxModel {
             httpRequest.setHeader(headerData);
             httpRequest.request((int httpCode, String response) -> {
                 try {
-                    parkingLotDao.delete();
+                    parkingLotDao.deleteAll();
 
                     JSONObject data = new JSONObject(response);
                     JSONArray carParks = data.getJSONArray("CarParks");
