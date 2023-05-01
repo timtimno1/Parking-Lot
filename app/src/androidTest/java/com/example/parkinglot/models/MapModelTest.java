@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.views.MainActivity;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +18,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class MapModelTest {
 
+    private ParkingLotDao parkingLotDao;
+
     @Before
     public void setUp() {
         MainActivity.setApplicationContextInstance(ApplicationProvider.getApplicationContext());
-        ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
+        parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
         ParkingLotEntity parkingLotEntity = new ParkingLotEntity();
         parkingLotEntity.carParkID = "testID";
         parkingLotEntity.parkingLotName = "test";
@@ -30,9 +33,14 @@ public class MapModelTest {
         parkingLotEntity.remainingParkingSpace = 50;
         parkingLotEntity.latitude = 120.0;
         parkingLotEntity.longitude = 120.0;
-        parkingLotEntity.id = 1;
         parkingLotEntity.phoneNumber = "0912345678";
         parkingLotDao.insertAll(parkingLotEntity);
+    }
+
+    @After
+    public void tearDown() {
+        ParkingLotEntity parkingLotEntity = parkingLotDao.selectFromName("test");
+        parkingLotDao.delete(parkingLotEntity);
     }
 
     @Test
@@ -48,7 +56,6 @@ public class MapModelTest {
             assertEquals(50, parkingLotEntities.get(0).remainingParkingSpace);
             assertEquals(120.0, parkingLotEntities.get(0).latitude, 0.001);
             assertEquals(120.0, parkingLotEntities.get(0).longitude, 0.001);
-            assertEquals(1, parkingLotEntities.get(0).id);
             assertEquals("0912345678", parkingLotEntities.get(0).phoneNumber);
             latch.countDown();
         });
