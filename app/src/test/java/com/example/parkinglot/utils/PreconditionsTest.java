@@ -9,13 +9,13 @@ import org.junit.Test;
 public class PreconditionsTest {
     private Preconditions preconditions;
     boolean expressionTrue;
-    Object errorMessageTrue;
+    String errorMessageTrue;
     boolean expressionFalse;
-    Object errorMessageFalse;
+    String errorMessageFalse;
     String referenceNotNull;
-    Object errorMessageNotNull;
+    String errorMessageNotNull;
     String referenceNull;
-    Object errorMessageNull;
+    String errorMessageNull;
     @Before
     public void setUp() throws Exception {
         expressionTrue = true;
