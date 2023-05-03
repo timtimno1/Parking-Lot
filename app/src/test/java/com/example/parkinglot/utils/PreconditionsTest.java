@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PreconditionsTest {
+    private Preconditions preconditions;
     boolean expressionTrue;
     Object errorMessageTrue;
     boolean expressionFalse;
@@ -34,10 +35,10 @@ public class PreconditionsTest {
     @Test
     public void checkArgumentTest() {
         // Test when expression is true
-        Preconditions.checkArgument(expressionTrue, errorMessageTrue); // No exception should be thrown
+        preconditions.checkArgument(expressionTrue, errorMessageTrue); // No exception should be thrown
         // Test when expression is false
         try {
-            Preconditions.checkArgument(expressionFalse, errorMessageFalse);
+            preconditions.checkArgument(expressionFalse, errorMessageFalse);
             fail("IllegalArgumentException should have been thrown");
         } catch (IllegalArgumentException e) {
             assertEquals(errorMessageFalse, e.getMessage());
@@ -46,10 +47,10 @@ public class PreconditionsTest {
     @Test
     public void checkNotNullTest() {
         // Test when reference is not null
-        assertEquals(referenceNotNull, Preconditions.checkNotNull(referenceNotNull, errorMessageNotNull));
+        assertEquals(referenceNotNull, preconditions.checkNotNull(referenceNotNull, errorMessageNotNull));
         // Test when reference is null
         try {
-            Preconditions.checkNotNull(referenceNull, errorMessageNull);
+            preconditions.checkNotNull(referenceNull, errorMessageNull);
             fail("NullPointerException should have been thrown");
         } catch (NullPointerException e) {
             assertEquals(errorMessageNull, e.getMessage());
