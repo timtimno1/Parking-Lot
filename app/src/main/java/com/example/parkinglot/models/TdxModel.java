@@ -127,8 +127,8 @@ public class TdxModel {
                 callBack.onSyncMessageReady(false, "interruptedException");
             }
 
-            for (String city: getTDXParkingLotDataRunnable.isSuccess().keySet()) {
-                if(Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city)) && getTDXParkingLotDataRunnable.getHttpCode().get(city) == 200) {
+            for (String city : getTDXParkingLotDataRunnable.isSuccess().keySet()) {
+                if (Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city)) && getTDXParkingLotDataRunnable.getHttpCode().get(city) == 200) {
                     result.append(city).append(": ").append(getTDXParkingLotDataRunnable.getMessage().get(city)).append("\n");
                     success = false;
                 }
