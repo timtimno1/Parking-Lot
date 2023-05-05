@@ -65,14 +65,11 @@ public class TdxModel {
         try {
             httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/auth/realms/TDXConnect/protocol/openid-connect/token"));
             httpRequest.setRequestMethod("POST");
-        }
-        catch (ProtocolException e) {
+        } catch (ProtocolException e) {
             throw new RuntimeException(e);
-        }
-        catch (MalformedURLException e) {
+        } catch (MalformedURLException e) {
             throw new RuntimeException(e);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -91,8 +88,7 @@ public class TdxModel {
                         tdxTokenDao.insertToken(new TdxTokenEntity().setTdxToken(new JSONObject(response).getString("access_token")));
                     else
                         tdxTokenDao.updateToken(new JSONObject(response).getString("access_token"));
-                }
-                catch (JSONException e) {
+                } catch (JSONException e) {
                     throw new RuntimeException(e);
                 }
             }).start();
