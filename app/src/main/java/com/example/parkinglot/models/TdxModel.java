@@ -247,12 +247,12 @@ class GetTDXParkingLotDataRunnable implements Runnable {
     }
 }
 
-enum Citys {
+enum Cities {
     TAIPEI("Taipei"), KEELUNG("Keelung"), TAOYUAN("Taoyuan"), HSINCHU("Hsinchu"), HUALIENCOUNTY("HualienCounty"), YILANCOUNTY("YilanCounty"), MIAOLICOUNTY("MiaoliCounty"), TAICHUNG("Taichung"), NANTOUCOUNTY("NantouCounty"), CHIAYI("Chiayi"), CHIAYICOUNTY("ChiayiCounty"), TAINAN("Tainan"), KAOHSIUNG("KaohsIung"), PINGTUNGCOUNTY("PingtungCounty"), TAITUNGCOUNTY("TaitungCounty"), KinmenCounty("KinmenCounty"), LienchiangCounty("LienchiangCounty");
 
     private final String cityString;
 
-    Citys(String cityString) {
+    Cities(String cityString) {
         this.cityString = cityString;
     }
 
