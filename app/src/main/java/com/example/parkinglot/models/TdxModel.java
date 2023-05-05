@@ -79,20 +79,18 @@ public class TdxModel {
         bodyData.put("client_secret", "03716dc7-7bba-44b4-9650-4ff13d84c16c");
 
         httpRequest.setBodyData(bodyData);
-        httpRequest.request((int httpCode, String response) -> {
-            new Thread(() -> {
-                ParkingLotDataBase db = ParkingLotDataBase.getInstance();
-                TdxTokenDao tdxTokenDao = db.tdxTokenDao();
-                try {
-                    if (tdxTokenDao.getCount() == 0)
-                        tdxTokenDao.insertToken(new TdxTokenEntity().setTdxToken(new JSONObject(response).getString("access_token")));
-                    else
-                        tdxTokenDao.updateToken(new JSONObject(response).getString("access_token"));
-                } catch (JSONException e) {
-                    throw new RuntimeException(e);
-                }
-            }).start();
-        }, (int httpCode, String errorMessage) -> {
+        httpRequest.request((int httpCode, String response) -> new Thread(() -> {
+            ParkingLotDataBase db = ParkingLotDataBase.getInstance();
+            TdxTokenDao tdxTokenDao = db.tdxTokenDao();
+            try {
+                if (tdxTokenDao.getCount() == 0)
+                    tdxTokenDao.insertToken(new TdxTokenEntity().setTdxToken(new JSONObject(response).getString("access_token")));
+                else
+                    tdxTokenDao.updateToken(new JSONObject(response).getString("access_token"));
+            } catch (JSONException e) {
+                throw new RuntimeException(e);
+            }
+        }).start(), (int httpCode, String errorMessage) -> {
 
         });
     }
