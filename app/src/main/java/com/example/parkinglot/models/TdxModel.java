@@ -116,8 +116,10 @@ public class TdxModel {
             GetTDXParkingLotDataRunnable getTDXParkingLotDataRunnable = new GetTDXParkingLotDataRunnable();
             Thread thread = new Thread(getTDXParkingLotDataRunnable);
 
+            Log.d(TAG, "Start sent API to TDX");
             thread.start();
 
+            Log.d(TAG, "Waiting response for TDX API");
             try {
                 thread.join();
 
@@ -131,8 +133,10 @@ public class TdxModel {
                     success = false;
                 }
             }
-            if(success)
+            if (success) {
                 result.append("sync success");
+                Log.d(TAG, "Receive TDX response");
+            }
             callBack.onSyncMessageReady(success, result.toString());
         }).start();
     }
