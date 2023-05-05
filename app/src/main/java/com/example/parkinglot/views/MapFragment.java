@@ -10,6 +10,7 @@ import android.util.Log;
 
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -179,6 +181,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
 
         mapViewModel.doAction();
         mapViewModel.getData().observe(getViewLifecycleOwner(), this::addMarkerToMap);
+        mapViewModel.getSyncMessage().observe(getViewLifecycleOwner(), syncMessage -> {
+            // TODO 這邊是不是不應該寫邏輯
+            // TODO 成功才更新圖標
+            Snackbar.make(this.getView(), syncMessage, Snackbar.LENGTH_SHORT).show();
+//            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
+            mapViewModel.doAction();
+        });
         setUpClusterer();
 
         // Set a listener for info window events.
@@ -208,12 +217,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
     @Override
     public void onClick(View view) {
         mapViewModel.doSync();
-        mapViewModel.getSyncMessage().observe(getViewLifecycleOwner(), syncMessage -> {
-            // TODO 這邊是不是不應該寫邏輯
-            // TODO 成功才更新圖標
-            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
-            mapViewModel.doAction();
-        });
         Log.d("BUTTONS", "User tapped the sync");
     }
 
