@@ -160,7 +160,7 @@ class GetTDXParkingLotDataRunnable implements Runnable {
         success = new HashMap<>();
         message = new HashMap<>();
 
-        for (Citys city : Citys.values())
+        for (Cities city : Cities.values())
             httpCode.put(city.toString(), -1);
     }
 
@@ -169,7 +169,7 @@ class GetTDXParkingLotDataRunnable implements Runnable {
         String token = ParkingLotDataBase.getInstance().tdxTokenDao().getToken().tdxToken;
         ParkingLotDao parkingLotDao = ParkingLotDataBase.getInstance().parkingLotDao();
 
-        for (Citys city : Citys.values()) {
+        for (Cities city : Cities.values()) {
             ParkingLotEntity parkingLotEntity = new ParkingLotEntity();
             HttpRequest httpRequest;
             try {
@@ -224,7 +224,7 @@ class GetTDXParkingLotDataRunnable implements Runnable {
                 }
             });
         }
-        while (completed < Citys.values().length) ;
+        while (completed < Cities.values().length) ;
     }
 
     public Map<String, Integer> getHttpCode() {
