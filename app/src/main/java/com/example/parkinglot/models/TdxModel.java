@@ -128,8 +128,10 @@ public class TdxModel {
             }
 
             for (String city : getTDXParkingLotDataRunnable.isSuccess().keySet()) {
-                if (Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city)) && getTDXParkingLotDataRunnable.getHttpCode().get(city) == 200) {
-                    result.append(city).append(": ").append(getTDXParkingLotDataRunnable.getMessage().get(city)).append("\n");
+                if (Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city))) {
+                    result.append(city)
+                            .append("Http Code: ").append(getTDXParkingLotDataRunnable.getHttpCode().get(city))
+                            .append(": ").append(getTDXParkingLotDataRunnable.getMessage().get(city)).append("\n");
                     success = false;
                 }
             }
@@ -153,7 +155,7 @@ class GetTDXParkingLotDataRunnable implements Runnable {
 
     private final Map<String, String> message;
 
-    private int completed = 0;
+    private volatile int completed = 0;
 
     public GetTDXParkingLotDataRunnable() {
         httpCode = new HashMap<>();
