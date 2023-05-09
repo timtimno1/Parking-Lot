@@ -22,6 +22,7 @@ import java.util.Map;
 public class TdxModel {
     private String TAG = TdxModel.class.getSimpleName();
 
+    private volatile boolean tokenUpdated;
 
     public String getCityPhonePrefix(String city) {
         switch (city) {
@@ -117,6 +118,7 @@ public class TdxModel {
             } catch (JSONException e) {
                 throw new RuntimeException(e);
             }
+            tokenUpdated = true;
         }).start(), (int httpCode, String errorMessage) -> {
 
         });
@@ -155,23 +157,32 @@ public class TdxModel {
             }
 
             for (String city : getTDXParkingLotDataRunnable.isSuccess().keySet()) {
-                if (Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city)) && getTDXParkingLotDataRunnable.getHttpCode().get(city) == 200) {
-                    result.append(city).append(": ").append(getTDXParkingLotDataRunnable.getMessage().get(city)).append("\n");
+                if (getTDXParkingLotDataRunnable.getHttpCode().get(city) == 401) {
+                    updateTdxToken();
+                    while (!tokenUpdated) ;
+                    syncTDXParkingLotData(callBack);
+                    success = false;
+                    result.append("Update TDX token");
+                    break;
+                } else if (Boolean.FALSE.equals(getTDXParkingLotDataRunnable.isSuccess().get(city))) {
+                    result.append(city)
+                            .append("Http Code: ").append(getTDXParkingLotDataRunnable.getHttpCode().get(city))
+                            .append(": ").append(getTDXParkingLotDataRunnable.getMessage().get(city)).append("\n");
                     success = false;
                 }
             }
+
             if (success) {
                 result.append("sync success");
-                Log.d(TAG, "Receive TDX response");
+                Log.d(TAG, "Receive all parking lot from TDX response");
             }
+
             callBack.onSyncMessageReady(success, result.toString());
         }).start();
     }
 }
 
 class GetTDXParkingLotDataRunnable implements Runnable {
-
-    private final String TAG = GetTDXParkingLotDataRunnable.class.getSimpleName();
 
 
     private final Map<String, Integer> httpCode;
@@ -180,7 +191,7 @@ class GetTDXParkingLotDataRunnable implements Runnable {
 
     private final Map<String, String> message;
 
-    private int completed = 0;
+    private volatile int completed = 0;
 
     public GetTDXParkingLotDataRunnable() {
         httpCode = new HashMap<>();
@@ -203,15 +214,15 @@ class GetTDXParkingLotDataRunnable implements Runnable {
                 httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/CarPark/City/" + city.toString() + "?$select=CarParkName, CarParkPosition, Address, FareDescription, CarParkID, CarParkName, EmergencyPhone&$count=true&$format=JSON"));
                 httpRequest.setRequestMethod("GET");
             } catch (ProtocolException e) {
-                Log.e(TAG, e.toString());
+                Log.e("TdxModel", e.toString());
                 setCallBackInfo(city.toString(), -1, false, "Sync Parking Lot error throw the ProtocolException");
                 continue;
             } catch (MalformedURLException e) {
-                Log.e(TAG, e.toString());
+                Log.e("TdxModel", e.toString());
                 setCallBackInfo(city.toString(), -1, false, "Sync Parking Lot error throw the MalformedURLException");
                 continue;
             } catch (IOException e) {
-                Log.e(TAG, e.toString());
+                Log.e("TdxModel", e.toString());
                 setCallBackInfo(city.toString(), -1, false, "Sync Parking Lot error throw the IOException");
                 continue;
             }
@@ -237,10 +248,10 @@ class GetTDXParkingLotDataRunnable implements Runnable {
                         parkingLotEntity.phoneNumber = /*getCityPhonePrefix(City) + */ (carPark.has("EmergencyPhone") ? carPark.getString("EmergencyPhone") : "");
                         parkingLotDao.insertAll(parkingLotEntity); // TODO 每次都Insert嗎? 如果已經存在呢?
                     }
-                    Log.d("TdxModel", "Http code: " + httpCode + ", Sync success");
+                    Log.d("TdxModel", "Http code: " + httpCode + ", " + city + " sync success");
                     setCallBackInfo(city.toString(), httpCode, true, "Sync success");
                 } catch (JSONException e) {
-                    Log.e(TAG, "Sync Parking Lot error throw the JSONException, Error: " + e);
+                    Log.e("TdxModel", "Http code: " + httpCode + ", " + city + "Sync Parking Lot error throw the JSONException, Error: " + e);
                     setCallBackInfo(city.toString(), -1, false, "JSON: " + e);
                 }
             }, (int httpCode, String errorMessage) -> {
