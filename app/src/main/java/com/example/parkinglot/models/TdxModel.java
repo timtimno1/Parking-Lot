@@ -58,6 +58,33 @@ public class TdxModel {
                 throw new IllegalArgumentException();
         }
     }
+    public void getParkingAvailability() {
+        // TODO handling the try catch
+        HttpRequest httpRequest;
+        try {
+            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/City/Taoyuan?$filder=CarParkID eq /'" + "1" + "/'"));
+            httpRequest.setRequestMethod("POST");
+        }
+        catch (ProtocolException e) {
+            throw new RuntimeException(e);
+        }
+        catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        new Thread(() -> {
+            String token = ParkingLotDataBase.getInstance().tdxTokenDao().getToken().tdxToken;
+            Map<String, String> headerData = new HashMap<>();
+            headerData.put("accept", "application/json");
+            headerData.put("Authorization", "Bearer " + token);
+
+            httpRequest.setHeader(headerData);
+
+        }).start();
+    }
 
     public void updateTdxToken() {
         // TODO handling the try catch
