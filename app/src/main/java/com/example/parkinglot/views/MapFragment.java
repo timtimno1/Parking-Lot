@@ -188,7 +188,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
 //            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
             mapViewModel.doAction();
         });
-        setUpClusterer();
+        setUpCluster();
 
         // Set a listener for info window events.
 
@@ -236,7 +236,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
     }
 
     @SuppressLint("PotentialBehaviorOverride")
-    private void setUpClusterer() {
+    private void setUpCluster() {
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         clusterManager = new ClusterManager<>(this.requireContext(), googleMap);
