@@ -21,6 +21,10 @@ public class ParkingLotEntity {
     @ColumnInfo(name = "parkingLotName")
     public String parkingLotName;
 
+    public String getCarParkID() {
+        return carParkID;
+    }
+
     @ColumnInfo(name = "carParkID")
     public String carParkID;
 

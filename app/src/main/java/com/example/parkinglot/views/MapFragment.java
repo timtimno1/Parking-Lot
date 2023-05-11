@@ -10,6 +10,7 @@ import android.util.Log;
 
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,19 +24,25 @@ import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener {
+public class MapFragment extends Fragment implements
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -54,7 +61,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
 
     private MapView mapView;
 
+    private Map<String, ParkingLotEntity> parkingLotEntitys;
+
     private MapViewModel mapViewModel = new MapViewModel();
+
+    private final Map<String, String> carParkNameMappingID = new HashMap<>();
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -173,7 +184,21 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
 
         mapViewModel.doAction();
         mapViewModel.getData().observe(getViewLifecycleOwner(), this::addMarkerToMap);
-        setUpClusterer();
+        mapViewModel.getSyncMessage().observe(getViewLifecycleOwner(), syncMessage -> {
+            // TODO 這邊是不是不應該寫邏輯
+            // TODO 成功才更新圖標
+            Snackbar.make(this.getView(), syncMessage, Snackbar.LENGTH_SHORT).show();
+//            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
+            mapViewModel.doAction();
+        });
+        mapViewModel.getCarParkAvailability().observe(getViewLifecycleOwner(), carParkAvailability -> {
+            Snackbar.make(this.getView(), "剩餘車位: " + carParkAvailability, Snackbar.LENGTH_SHORT).show();
+        });
+        setUpCluster();
+
+        // Set a listener for info window events.
+
+
     }
 
     @Override
@@ -198,28 +223,30 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
     @Override
     public void onClick(View view) {
         mapViewModel.doSync();
-        mapViewModel.getSyncMessage().observe(getViewLifecycleOwner(), syncMessage -> {
-            // TODO 這邊是不是不應該寫邏輯
-            // TODO 成功才更新圖標
-            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
-            mapViewModel.doAction();
-        });
         Log.d("BUTTONS", "User tapped the sync");
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     private void addMarkerToMap(List<ParkingLotEntity> parkingLotEntities) {
         // TODO 刪除重複的marker
         clusterManager.clearItems();
+        carParkNameMappingID.clear();
+        this.googleMap.setOnInfoWindowClickListener(this);
         for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
+            carParkNameMappingID.put(parkingLotEntity.parkingLotName, parkingLotEntity.carParkID);
             clusterManager.addItem(new MyItem(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
-//            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
+            //            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
         }
         clusterManager.setRenderer(new MarkerClusterRenderer(this.getContext(), googleMap, clusterManager));
         clusterManager.cluster();
+
+        // convert list to hashMap
+//        this.parkingLotEntitys = parkingLotEntities.stream()
+//                .collect(Collectors.toMap(ParkingLotEntity::getCarParkID, Function.identity()));
     }
 
     @SuppressLint("PotentialBehaviorOverride")
-    private void setUpClusterer() {
+    private void setUpCluster() {
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
         clusterManager = new ClusterManager<>(this.requireContext(), googleMap);
@@ -227,6 +254,11 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         // manager.
         googleMap.setOnCameraIdleListener(clusterManager);
         googleMap.setOnMarkerClickListener(clusterManager);
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        mapViewModel.doParkingAvailability(carParkNameMappingID.get(marker.getTitle()));
     }
 
     public class MyItem implements ClusterItem {
