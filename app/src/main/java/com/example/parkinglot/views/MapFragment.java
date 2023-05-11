@@ -41,7 +41,8 @@ import java.util.stream.Collectors;
  * Use the {@link MapFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener/*, GoogleMap.OnInfoWindowClickListener*/ {
+public class MapFragment extends Fragment implements
+        GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, OnMapReadyCallback, View.OnClickListener, GoogleMap.OnInfoWindowClickListener {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -63,6 +64,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
     private Map<String, ParkingLotEntity> parkingLotEntitys;
 
     private MapViewModel mapViewModel = new MapViewModel();
+
+    private final Map<String, String> carParkNameMappingID = new HashMap<>();
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -188,11 +191,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
 //            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
             mapViewModel.doAction();
         });
+        mapViewModel.getCarParkAvailability().observe(getViewLifecycleOwner(), carParkAvailability -> {
+            Snackbar.make(this.getView(), "剩餘車位: " + carParkAvailability, Snackbar.LENGTH_SHORT).show();
+        });
         setUpCluster();
 
         // Set a listener for info window events.
 
-//        googleMap.setOnInfoWindowClickListener(this);
+
     }
 
     @Override
@@ -220,10 +226,14 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         Log.d("BUTTONS", "User tapped the sync");
     }
 
+    @SuppressLint("PotentialBehaviorOverride")
     private void addMarkerToMap(List<ParkingLotEntity> parkingLotEntities) {
         // TODO 刪除重複的marker
         clusterManager.clearItems();
+        carParkNameMappingID.clear();
+        this.googleMap.setOnInfoWindowClickListener(this);
         for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
+            carParkNameMappingID.put(parkingLotEntity.parkingLotName, parkingLotEntity.carParkID);
             clusterManager.addItem(new MyItem(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
             //            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
         }
@@ -246,10 +256,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMyLocationButto
         googleMap.setOnMarkerClickListener(clusterManager);
     }
 
-//    @Override
-//    public void onInfoWindowClick(Marker marker) {
-//        Toast.makeText(this.requireContext(), parkingLotEntitys.get(marker.getTitle()).fareDescription, Toast.LENGTH_SHORT).show();
-//    }
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        mapViewModel.doParkingAvailability(carParkNameMappingID.get(marker.getTitle()));
+    }
 
     public class MyItem implements ClusterItem {
         private final LatLng position;

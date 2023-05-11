@@ -19,6 +19,8 @@ public class MapViewModel extends ViewModel {
 
     private final MutableLiveData<String> syncMessage = new MutableLiveData<>();
 
+    private final MutableLiveData<String> carParkAvailability = new MutableLiveData<>();
+
     private final MutableLiveData<Boolean> success = new MutableLiveData<>();
 
     public LiveData<List<ParkingLotEntity>> getData() {
@@ -29,6 +31,10 @@ public class MapViewModel extends ViewModel {
         return syncMessage;
     }
 
+    public LiveData<String> getCarParkAvailability() {
+        return carParkAvailability;
+    }
+
     public void doAction() {
         mapModel.getParkingLotData((parkingLots::postValue));
     }
@@ -37,6 +43,12 @@ public class MapViewModel extends ViewModel {
         tdxModel.syncTDXParkingLotData((success, message) -> {
             // TODO 回傳success變數
             syncMessage.postValue(message);
+        });
+    }
+
+    public void doParkingAvailability(String carParkID) {
+        tdxModel.getParkingAvailability(carParkID, (success, message) -> {
+            carParkAvailability.postValue(message);
         });
     }
 }

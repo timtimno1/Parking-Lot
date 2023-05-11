@@ -7,6 +7,7 @@ import com.example.parkinglot.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.utils.HttpRequest;
+import com.example.parkinglot.viewmodels.callback.OnParkingAvailabilityCallBack;
 import com.example.parkinglot.viewmodels.callback.OnParkingLotSyncCallBack;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,12 +60,12 @@ public class TdxModel {
                 throw new IllegalArgumentException();
         }
     }
-    public void getParkingAvailability() {
+    public void getParkingAvailability(String carParkID, OnParkingAvailabilityCallBack onParkingAvailabilityCallBack) {
         // TODO handling the try catch
         HttpRequest httpRequest;
         try {
-            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/City/Taoyuan?$filder=CarParkID eq /'" + "1" + "/'"));
-            httpRequest.setRequestMethod("POST");
+            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/City/Taoyuan?$filter=CarParkID eq '" + carParkID + "'"));
+            httpRequest.setRequestMethod("GET");
         }
         catch (ProtocolException e) {
             throw new RuntimeException(e);
@@ -84,6 +85,19 @@ public class TdxModel {
 
             httpRequest.setHeader(headerData);
 
+            httpRequest.request((int httpCode, String response) -> new Thread(() -> {
+                JSONObject data;
+                try {
+                    data = new JSONObject(response);
+                    onParkingAvailabilityCallBack.onParkingAvailabilityReady(true,data.getJSONArray("ParkingAvailabilities").getJSONObject(0).getString("AvailableSpaces"));
+                }
+                catch (JSONException e) {
+
+                }
+
+            }).start(), (int httpCode, String errorMessage) -> {
+
+            });
         }).start();
     }
 
