@@ -40,10 +40,9 @@ public class HttpRequest {
     }
 
     /**
+     * Returns a Map of the body data associated with this request.
      *
-     *   Returns a Map of the body data associated with this request.
-     *
-     *   @return A Map of the body data associated with this request.
+     * @return A Map of the body data associated with this request.
      */
     public Map<String, String> getBodyData() {
         return this.bodyData;
@@ -60,10 +59,9 @@ public class HttpRequest {
 
 
     /**
+     * Returns the header data of the request.
      *
-     *   Returns the header data of the request.
-     *
-     *   @return A {@link Map} containing the header data of the request.
+     * @return A {@link Map} containing the header data of the request.
      */
     public Map<String, String> getHeaderData() {
         return this.headerData;
@@ -74,9 +72,10 @@ public class HttpRequest {
      *
      * @param successCallBack The callback to be called if the response code is 200.
      * @param failCallBack    The callback to be called if the response code is not 200 and other errors.
+     * @return A thread that sends the request to the server.
      */
-    public void request(SuccessCallBack successCallBack, FailCallBack failCallBack) {
-        new Thread(() -> {
+    public Thread request(SuccessCallBack successCallBack, FailCallBack failCallBack) {
+        Thread thread = new Thread(() -> {
             try {
                 connection.setDoInput(true);
                 if (headerData != null)
@@ -96,20 +95,20 @@ public class HttpRequest {
 
                 if (connection.getResponseCode() == 200) {
                     successCallBack.callBack(connection.getResponseCode(), readeResponse(connection.getResponseCode()));
-                }
-                else {
+                } else {
                     failCallBack.callBack(connection.getResponseCode(), readeResponse(connection.getResponseCode()));
                 }
-            }
-            catch (IOException ioException) {
+            } catch (IOException ioException) {
                 failCallBack.callBack(-1, ioException.toString());
 
-            }
-            finally {
+            } finally {
                 if (connection != null)
                     connection.disconnect();
             }
-        }).start();
+        });
+
+        thread.start();
+        return thread;
     }
 
     /**
@@ -144,7 +143,7 @@ public class HttpRequest {
 
     private String readeResponse(int httpCode) throws IOException {
         InputStream inputStream;
-        if(httpCode == 200)
+        if (httpCode == 200)
             inputStream = connection.getInputStream();
         else
             inputStream = connection.getErrorStream();
