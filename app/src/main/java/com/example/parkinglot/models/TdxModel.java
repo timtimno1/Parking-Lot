@@ -31,11 +31,11 @@ public class TdxModel {
 
     private volatile boolean tokenUpdated;
 
-    public void getParkingAvailability(String carParkID, OnParkingAvailabilityCallBack onParkingAvailabilityCallBack) {
+    public void getParkingAvailability(String carParkID,String city,OnParkingAvailabilityCallBack onParkingAvailabilityCallBack) {
         // TODO handling the try catch
         HttpRequest httpRequest;
         try {
-            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/City/Taoyuan?$filter=CarParkID eq '" + carParkID + "'"));
+            httpRequest = new HttpRequest(new URL("https://tdx.transportdata.tw/api/basic/v1/Parking/OffStreet/ParkingAvailability/City/"+ city + "?$filter=CarParkID eq '" + carParkID + "'"));
             httpRequest.setRequestMethod("GET");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -141,7 +141,9 @@ public class TdxModel {
         TdxService tdxService = new TdxService();
         for (Cities city : Cities.values()) {
             try {
-                parkingLotEntities.addAll(tdxService.parkingInfo(city.toString()));
+                List<ParkingLotEntity> temp = tdxService.parkingInfo(city.toString());
+                temp.forEach(parkingLot -> parkingLot.city = city.toString());
+                parkingLotEntities.addAll(temp);
             } catch (IOException e) {
                 Log.e(TAG, city + " occur IOException");
                 break;

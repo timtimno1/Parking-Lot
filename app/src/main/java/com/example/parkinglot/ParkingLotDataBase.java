@@ -10,7 +10,7 @@ import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.views.MainActivity;
 
-@Database(entities = {ParkingLotEntity.class, TdxTokenEntity.class}, version = 2)
+@Database(entities = {ParkingLotEntity.class, TdxTokenEntity.class}, version = 3)
 public abstract class ParkingLotDataBase extends RoomDatabase {
     private static ParkingLotDataBase instance = null;
 
@@ -22,7 +22,7 @@ public abstract class ParkingLotDataBase extends RoomDatabase {
         if (MainActivity.getApplicationContextInstance() == null)
             throw new NullPointerException("ApplicationContext is null");
         if(instance == null)
-            instance = Room.databaseBuilder(MainActivity.getApplicationContextInstance(), ParkingLotDataBase.class, "ParkingLot").build();
+            instance = Room.databaseBuilder(MainActivity.getApplicationContextInstance(), ParkingLotDataBase.class, "ParkingLot").fallbackToDestructiveMigration().build();
       return instance;
     };
 }
