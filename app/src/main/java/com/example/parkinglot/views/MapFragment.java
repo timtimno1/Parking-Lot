@@ -30,6 +30,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,10 @@ public class MapFragment extends Fragment implements
     private MapViewModel mapViewModel = new MapViewModel();
 
     private final Map<String, String> carParkNameMappingID = new HashMap<>();
+
+    private final Map<String, String> carParkNameMappingCityName = new HashMap<>();
+
+    private final List<MyParkingLotMarker> myParkingLotMarkerList = new ArrayList<>();
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -258,8 +263,13 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        mapViewModel.doParkingAvailability(carParkNameMappingID.get(marker.getTitle()));
+        mapViewModel.doParkingAvailability(carParkNameMappingID.get(marker.getTitle()), carParkNameMappingCityName.get(marker.getTitle()));
     }
+
+    public class MyClusterManager<T extends ClusterItem> extends ClusterManager<T> {
+        MyClusterManager() {
+            super(requireContext(), googleMap);
+        }
 
     public class MyItem implements ClusterItem {
         private final LatLng position;

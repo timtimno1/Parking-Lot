@@ -46,8 +46,8 @@ public class MapViewModel extends ViewModel {
         });
     }
 
-    public void doParkingAvailability(String carParkID) {
-        tdxModel.getParkingAvailability(carParkID, (success, message) -> {
+    public void doParkingAvailability(String carParkID, String city) {
+        tdxModel.getParkingAvailability(carParkID ,city, (success, message) -> {
             carParkAvailability.postValue(message);
         });
     }
