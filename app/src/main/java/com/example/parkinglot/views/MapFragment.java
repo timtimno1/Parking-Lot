@@ -58,7 +58,7 @@ public class MapFragment extends Fragment implements
 
     private GoogleMap googleMap;
 
-    private ClusterManager<MyItem> clusterManager;
+    private ClusterManager<MyParkingLotMarker> clusterManager;
 
     private MapView mapView;
 
@@ -236,11 +236,13 @@ public class MapFragment extends Fragment implements
         // TODO 刪除重複的marker
         clusterManager.clearItems();
         carParkNameMappingID.clear();
+        carParkNameMappingCityName.clear();
         this.googleMap.setOnInfoWindowClickListener(this);
         for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
             carParkNameMappingID.put(parkingLotEntity.parkingLotName, parkingLotEntity.carParkID);
-            clusterManager.addItem(new MyItem(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
-            //            googleMap.addMarker(new MarkerOptions().position(new LatLng(parkingLot.latitude, parkingLot.longitude)).title(parkingLot.parkingLotName));
+            carParkNameMappingCityName.put(parkingLotEntity.parkingLotName, parkingLotEntity.city);
+            myParkingLotMarkerList.add(new MyParkingLotMarker(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
+            clusterManager.addItem(myParkingLotMarkerList.get(myParkingLotMarkerList.size() - 1));
         }
         clusterManager.setRenderer(new MarkerClusterRenderer(this.getContext(), googleMap, clusterManager));
         clusterManager.cluster();
@@ -271,12 +273,14 @@ public class MapFragment extends Fragment implements
             super(requireContext(), googleMap);
         }
 
-    public class MyItem implements ClusterItem {
+    }
+
+    public class MyParkingLotMarker implements ClusterItem {
         private final LatLng position;
         private final String title;
         private final String snippet;
 
-        public MyItem(double lat, double lng, String title, String snippet) {
+        public MyParkingLotMarker(double lat, double lng, String title, String snippet) {
             position = new LatLng(lat, lng);
             this.title = title;
             this.snippet = snippet;
@@ -298,14 +302,14 @@ public class MapFragment extends Fragment implements
         }
     }
 
-    public class MarkerClusterRenderer extends DefaultClusterRenderer<MyItem> {   // 1
+    public class MarkerClusterRenderer extends DefaultClusterRenderer<MyParkingLotMarker> {   // 1
 
         private static final int MARKER_DIMENSION = 100;  // 2
 
         private final IconGenerator iconGenerator;
         private final ImageView markerImageView;
 
-        public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<MyItem> clusterManager) {
+        public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<MyParkingLotMarker> clusterManager) {
             super(context, map, clusterManager);
             iconGenerator = new IconGenerator(context);  // 3
             markerImageView = new ImageView(context);
@@ -314,7 +318,7 @@ public class MapFragment extends Fragment implements
         }
 
         @Override
-        protected void onBeforeClusterItemRendered(MyItem item, MarkerOptions markerOptions) { // 5
+        protected void onBeforeClusterItemRendered(MyParkingLotMarker item, MarkerOptions markerOptions) { // 5
             markerImageView.setImageResource(R.drawable.parking);  // 6
             Bitmap icon = iconGenerator.makeIcon();  // 7
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));  // 8
