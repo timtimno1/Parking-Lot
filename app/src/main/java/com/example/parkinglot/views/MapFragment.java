@@ -123,14 +123,7 @@ public class MapFragment extends Fragment implements
     @Override
     public void onViewCreated(View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
-
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
-        //        mapViewModel.doAction();
-        //        mapViewModel.getData().observe(getViewLifecycleOwner(), latLong -> {
-        //            LatLng sydney = new LatLng(latLong.getLat(), latLong.getLon());
-        ////            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        ////            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        //        });
     }
 
     @Override
@@ -199,7 +192,6 @@ public class MapFragment extends Fragment implements
             // TODO 這邊是不是不應該寫邏輯
             // TODO 成功才更新圖標
             Snackbar.make(this.getView(), syncMessage, Snackbar.LENGTH_SHORT).show();
-//            Toast.makeText(this.getContext(), syncMessage, Toast.LENGTH_SHORT).show();
             mapViewModel.doAction();
         });
         mapViewModel.getCarParkAvailability().observe(getViewLifecycleOwner(), carParkAvailability -> {
@@ -255,10 +247,6 @@ public class MapFragment extends Fragment implements
         }
         clusterManager.setRenderer(new MarkerClusterRenderer(this.getContext(), googleMap, clusterManager));
         clusterManager.cluster();
-
-        // convert list to hashMap
-//        this.parkingLotEntitys = parkingLotEntities.stream()
-//                .collect(Collectors.toMap(ParkingLotEntity::getCarParkID, Function.identity()));
     }
 
     @SuppressLint("PotentialBehaviorOverride")
