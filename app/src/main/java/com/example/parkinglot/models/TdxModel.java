@@ -31,7 +31,7 @@ public class TdxModel {
 
     private volatile boolean tokenUpdated;
 
-    public void getParkingAvailability(String carParkID,String city,OnParkingAvailabilityCallBack onParkingAvailabilityCallBack) {
+    public void getParkingAvailability(String carParkID, String city, OnParkingAvailabilityCallBack onParkingAvailabilityCallBack) {
         // TODO handling the try catch
         HttpRequest httpRequest;
         try {
