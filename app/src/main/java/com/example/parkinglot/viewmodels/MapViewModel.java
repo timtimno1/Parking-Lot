@@ -6,8 +6,11 @@ import androidx.lifecycle.ViewModel;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.models.MapModel;
 import com.example.parkinglot.models.TdxModel;
+import com.example.parkinglot.viewmodels.DTO.ParkingAvailabilityDTO;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MapViewModel extends ViewModel {
 
@@ -19,9 +22,9 @@ public class MapViewModel extends ViewModel {
 
     private final MutableLiveData<String> syncMessage = new MutableLiveData<>();
 
-    private final MutableLiveData<String> carParkAvailability = new MutableLiveData<>();
+    private final MutableLiveData<ParkingAvailabilityDTO> carParkAvailability = new MutableLiveData<>();
 
-    private final MutableLiveData<Boolean> success = new MutableLiveData<>();
+    private final Map<String, String> carParkNameMappingAvailability = new HashMap<>();
 
     public LiveData<List<ParkingLotEntity>> getData() {
         return parkingLots;
@@ -31,7 +34,7 @@ public class MapViewModel extends ViewModel {
         return syncMessage;
     }
 
-    public LiveData<String> getCarParkAvailability() {
+    public LiveData<ParkingAvailabilityDTO> getCarParkAvailability() {
         return carParkAvailability;
     }
 
@@ -40,15 +43,21 @@ public class MapViewModel extends ViewModel {
     }
 
     public void doSync() {
-        tdxModel.syncTDXParkingLotData((success, message) -> {
-            // TODO 回傳success變數
-            syncMessage.postValue(message);
+        tdxModel.syncTDXParkingLotData((success, message) -> syncMessage.postValue(message));
+    }
+
+    public void doParkingAvailability(String carParkID, String carParkName, String city) {
+        tdxModel.getParkingAvailability(carParkID ,city, (success, availability) -> {
+            if (success) {
+                carParkAvailability.postValue(new ParkingAvailabilityDTO(carParkID, carParkName, availability));
+                carParkNameMappingAvailability.put(carParkName, availability);
+            }
+            else
+                carParkAvailability.postValue(new ParkingAvailabilityDTO(carParkID, carParkName, "Not available"));
         });
     }
 
-    public void doParkingAvailability(String carParkID, String city) {
-        tdxModel.getParkingAvailability(carParkID ,city, (success, message) -> {
-            carParkAvailability.postValue(message);
-        });
+    public String doParkingAvailability(String carParkName) {
+        return carParkNameMappingAvailability.get(carParkName);
     }
 }

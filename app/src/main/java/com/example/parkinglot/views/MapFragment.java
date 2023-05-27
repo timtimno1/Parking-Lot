@@ -4,14 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,11 +26,11 @@ import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.google.maps.android.ui.IconGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static com.example.parkinglot.utils.Preconditions.checkNotNull;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -71,6 +75,8 @@ public class MapFragment extends Fragment implements
     private final Map<String, String> carParkNameMappingCityName = new HashMap<>();
 
     private final List<MyParkingLotMarker> myParkingLotMarkerList = new ArrayList<>();
+
+    private Map<String, MyParkingLotMarker> visibleMarkers;
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -197,7 +203,10 @@ public class MapFragment extends Fragment implements
             mapViewModel.doAction();
         });
         mapViewModel.getCarParkAvailability().observe(getViewLifecycleOwner(), carParkAvailability -> {
-            Snackbar.make(this.getView(), "剩餘車位: " + carParkAvailability, Snackbar.LENGTH_SHORT).show();
+            if (Integer.parseInt(carParkAvailability.getAvailability()) > 10)
+                ((MarkerClusterRenderer) clusterManager.getRenderer()).setSpecificColor(this.visibleMarkers.get(carParkAvailability.getCarParkName()), Color.GREEN);
+            else
+                ((MarkerClusterRenderer) clusterManager.getRenderer()).setSpecificColor(this.visibleMarkers.get(carParkAvailability.getCarParkName()), Color.RED);
         });
         setUpCluster();
 
@@ -256,7 +265,7 @@ public class MapFragment extends Fragment implements
     private void setUpCluster() {
         // Initialize the manager with the context and the map.
         // (Activity extends context, so we can pass 'this' in the constructor.)
-        clusterManager = new ClusterManager<>(this.requireContext(), googleMap);
+        clusterManager = new MyClusterManager<>();
         // Point the map's listeners at the listeners implemented by the cluster
         // manager.
         googleMap.setOnCameraIdleListener(clusterManager);
@@ -265,7 +274,7 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        mapViewModel.doParkingAvailability(carParkNameMappingID.get(marker.getTitle()), carParkNameMappingCityName.get(marker.getTitle()));
+        Snackbar.make(checkNotNull(this.getView(), "View is null"), "剩餘車位: " + mapViewModel.doParkingAvailability(marker.getTitle()), BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
     public class MyClusterManager<T extends ClusterItem> extends ClusterManager<T> {
@@ -273,6 +282,17 @@ public class MapFragment extends Fragment implements
             super(requireContext(), googleMap);
         }
 
+        @Override
+        public void onCameraIdle() {
+            super.onCameraIdle();
+            if( visibleMarkers != null)
+                visibleMarkers.clear();
+            visibleMarkers = myParkingLotMarkerList.stream().filter(myParkingLotMarker ->
+                    googleMap.getProjection().getVisibleRegion().latLngBounds.contains(myParkingLotMarker.getPosition())
+            ).collect(Collectors.toMap(MyParkingLotMarker::getTitle, Function.identity()));
+            for (MyParkingLotMarker visibleMarker : visibleMarkers.values())
+                mapViewModel.doParkingAvailability(carParkNameMappingID.get(visibleMarker.title), visibleMarker.title, carParkNameMappingCityName.get(visibleMarker.title));
+        }
     }
 
     public class MyParkingLotMarker implements ClusterItem {
@@ -304,26 +324,30 @@ public class MapFragment extends Fragment implements
 
     public class MarkerClusterRenderer extends DefaultClusterRenderer<MyParkingLotMarker> {   // 1
 
-        private static final int MARKER_DIMENSION = 100;  // 2
-
-        private final IconGenerator iconGenerator;
-        private final ImageView markerImageView;
+        private final Bitmap bitmap;
+        private final Canvas canvas;
+        private final Drawable drawable;
 
         public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<MyParkingLotMarker> clusterManager) {
             super(context, map, clusterManager);
-            iconGenerator = new IconGenerator(context);  // 3
-            markerImageView = new ImageView(context);
-            markerImageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_DIMENSION, MARKER_DIMENSION));
-            iconGenerator.setContentView(markerImageView);  // 4
+            drawable = checkNotNull(ContextCompat.getDrawable(requireContext(), R.drawable.parking), "drawable is null");
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            canvas = new Canvas(bitmap);
+            drawable.draw(canvas);
         }
 
         @Override
         protected void onBeforeClusterItemRendered(MyParkingLotMarker item, MarkerOptions markerOptions) { // 5
-            markerImageView.setImageResource(R.drawable.parking);  // 6
-            Bitmap icon = iconGenerator.makeIcon();  // 7
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));  // 8
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(bitmap));  // 8
             markerOptions.title(item.getTitle());
             markerOptions.snippet(item.getSnippet());
+        }
+
+        public void setSpecificColor(MyParkingLotMarker marker, int colorTint) {
+            drawable.setTint(colorTint);
+            drawable.draw(canvas);
+            super.getMarker(marker).setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
         }
     }
 }
