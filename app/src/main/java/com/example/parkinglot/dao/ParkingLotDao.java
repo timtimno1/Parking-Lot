@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+
 import com.example.parkinglot.entity.ParkingLotEntity;
 
 import java.util.List;
@@ -24,4 +25,17 @@ public interface ParkingLotDao {
 
     @Query("SELECT * FROM parkingLot where parkingLotName = :parkingLotName")
     ParkingLotEntity selectFromName(String parkingLotName);
+
+    @Query("SELECT parkingLotName FROM parkingLot WHERE parkingLotName LIKE :keyword")
+    List<String> searcParkingLotName(String keyword);
+
+    @Query("SELECT city FROM parkingLot WHERE parkingLotName LIKE :keyword")
+    List<String> searcParkingLotCity(String keyword);
+
+    @Query("SELECT parkingLotName FROM parkingLot LIMIT 5")
+    List<String> defaultParkingLotName();
+
+    @Query("SELECT city FROM parkingLot LIMIT 5")
+    List<String> defaultParkingLotCity();
+
 }

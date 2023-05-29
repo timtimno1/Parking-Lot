@@ -1,11 +1,31 @@
 package com.example.parkinglot.views;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
+import android.view.*;
+
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
+import com.example.parkinglot.dao.ParkingLotDao;
+import com.example.parkinglot.entity.ParkingLotEntity;
+import com.example.parkinglot.models.TdxModel;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.zip.Inflater;
+
+import dto.SearchedParkingLotDto;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +45,15 @@ public class SearchFragment extends Fragment {
 
     private String mParam2;
 
+    Toolbar toolbar;
+
+    List<String> parkingLotName = new ArrayList<>();
+
+    List<String> city = new ArrayList<>();
+
+    List<SearchedParkingLotDto> searchedParkingLotDtos = new ArrayList<>();
+    UserAdapter userAdapter;
+    RecyclerView recyclerView;
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -48,17 +77,75 @@ public class SearchFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
+        recyclerView = view.findViewById(R.id.parkingLotList);
+        recyclerView.setAdapter(userAdapter);
+//        toolbar = view.findViewById(R.id.toolbar);
+//        AppCompatActivity activity = (AppCompatActivity) getActivity();
+//        activity.setSupportActionBar(toolbar);
+//        activity.getSupportActionBar().setTitle("搜尋");
+        return view;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getAllParkingLotName();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        prepareRecycleView();
+    }
+
+    public void getAllParkingLotName(){
+        new Thread(() ->{
+            parkingLotName = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotName();
+            city = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotCity();
+        }).start();
+    }
+
+    public void prepareRecycleView(){
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        preAdapter();
+    }
+
+    public void preAdapter(){
+
+        for(int i = 0; i < parkingLotName.size(); i++){
+            String name = parkingLotName.get(i);
+            String cityName = city.get(i);
+            SearchedParkingLotDto dto = new SearchedParkingLotDto(name, cityName);
+            searchedParkingLotDtos.add(dto);
+        }
+        userAdapter = new UserAdapter(searchedParkingLotDtos, this.getContext());
+        recyclerView.setAdapter(userAdapter);
+    }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        inflater.inflate(R.menu.nav_menu, menu);
+        MenuItem menuItem = menu.findItem(R.id.search_View);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                String searchStr = s;
+                userAdapter.getFilter().filter(s);
+                return false;
+            }
+        });
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }
