@@ -5,7 +5,6 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="10dp"
-    android:background="@color/parkingLot"
     android:layout_margin="5dp">
 
     <RelativeLayout
@@ -30,12 +29,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:text="parkingLotName"
         android:textSize="16dp"
         app:layout_constraintStart_toEndOf="@+id/cityImage"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/white"/>
+        android:textColor="@color/black"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -106,17 +106,16 @@ public class SearchFragment extends Fragment {
         new Thread(() ->{
             parkingLotName = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotName();
             city = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotCity();
+            getActivity().runOnUiThread(() -> preAdapter());
         }).start();
     }
 
     public void prepareRecycleView(){
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
-        preAdapter();
     }
 
     public void preAdapter(){
-
         for(int i = 0; i < parkingLotName.size(); i++){
             String name = parkingLotName.get(i);
             String cityName = city.get(i);
