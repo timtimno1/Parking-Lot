@@ -32,10 +32,10 @@ public interface ParkingLotDao {
     @Query("SELECT city FROM parkingLot WHERE parkingLotName LIKE :keyword")
     List<String> searcParkingLotCity(String keyword);
 
-    @Query("SELECT parkingLotName FROM parkingLot LIMIT 5")
+    @Query("SELECT parkingLotName FROM parkingLot")
     List<String> defaultParkingLotName();
 
-    @Query("SELECT city FROM parkingLot LIMIT 5")
+    @Query("SELECT city FROM parkingLot")
     List<String> defaultParkingLotCity();
 
 }

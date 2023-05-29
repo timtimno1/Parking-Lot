@@ -83,10 +83,11 @@ public class SearchFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         recyclerView = view.findViewById(R.id.parkingLotList);
         recyclerView.setAdapter(userAdapter);
-//        toolbar = view.findViewById(R.id.toolbar);
-//        AppCompatActivity activity = (AppCompatActivity) getActivity();
-//        activity.setSupportActionBar(toolbar);
-//        activity.getSupportActionBar().setTitle("搜尋");
+        toolbar = view.findViewById(R.id.toolbar);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+        activity.getSupportActionBar().setTitle("搜尋");
+        setHasOptionsMenu(true);
         return view;
     }
 
