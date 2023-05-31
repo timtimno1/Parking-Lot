@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.*;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -19,9 +20,12 @@ import com.example.parkinglot.R;
 import com.example.parkinglot.dao.ParkingLotDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.models.TdxModel;
+import com.example.parkinglot.utils.Cities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.zip.Inflater;
 
@@ -32,7 +36,7 @@ import dto.SearchedParkingLotDto;
  * Use the {@link SearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SearchFragment extends Fragment {
+public class SearchFragment extends Fragment implements UserAdapter.UserClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -54,6 +58,7 @@ public class SearchFragment extends Fragment {
     List<SearchedParkingLotDto> searchedParkingLotDtos = new ArrayList<>();
     UserAdapter userAdapter;
     RecyclerView recyclerView;
+
     public SearchFragment() {
         // Required empty public constructor
     }
@@ -119,11 +124,11 @@ public class SearchFragment extends Fragment {
     public void preAdapter(){
         for(int i = 0; i < parkingLotName.size(); i++){
             String name = parkingLotName.get(i);
-            String cityName = city.get(i);
+            String cityName = translateCityToChinese(city.get(i));
             SearchedParkingLotDto dto = new SearchedParkingLotDto(name, cityName);
             searchedParkingLotDtos.add(dto);
         }
-        userAdapter = new UserAdapter(searchedParkingLotDtos, this.getContext());
+        userAdapter = new UserAdapter(searchedParkingLotDtos, this.getContext(), this::selectedParkingLot);
         recyclerView.setAdapter(userAdapter);
     }
     @Override
@@ -145,7 +150,34 @@ public class SearchFragment extends Fragment {
                 return false;
             }
         });
-
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public String translateCityToChinese(String city) {
+        Map<String, String> cityChineseMap = new HashMap<>();
+        cityChineseMap.put("Taipei", "臺北");
+        cityChineseMap.put("Keelung", "基隆");
+        cityChineseMap.put("Taoyuan", "桃園");
+        cityChineseMap.put("Hsinchu", "新竹");
+        cityChineseMap.put("HualienCounty", "花蓮");
+        cityChineseMap.put("YilanCounty", "宜蘭");
+        cityChineseMap.put("MiaoliCounty", "苗栗");
+        cityChineseMap.put("Taichung", "臺中");
+        cityChineseMap.put("NantouCounty", "南投");
+        cityChineseMap.put("Chiayi", "嘉義");
+        cityChineseMap.put("ChiayiCounty", "嘉義縣");
+        cityChineseMap.put("Tainan", "臺南");
+        cityChineseMap.put("KaohsIung", "高雄");
+        cityChineseMap.put("PingtungCounty", "屏東");
+        cityChineseMap.put("TaitungCounty", "臺東");
+        cityChineseMap.put("KinmenCounty", "金門");
+        cityChineseMap.put("LienchiangCounty", "連江縣");
+
+        return cityChineseMap.get(city);
+    }
+
+    @Override
+    public void selectedParkingLot(SearchedParkingLotDto searchedParkingLotDto) {
+        Toast.makeText(this.getContext(), "停車場名字為" + searchedParkingLotDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
     }
 }

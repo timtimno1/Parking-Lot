@@ -28,10 +28,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
 
     public Context context;
 
-    public UserAdapter(List<SearchedParkingLotDto> dtos, Context context){
+    public UserClickListener userClickListener;
+    public interface UserClickListener{
+        void selectedParkingLot(SearchedParkingLotDto searchedParkingLotDto);
+    }
+
+    public UserAdapter(List<SearchedParkingLotDto> dtos, Context context, UserClickListener userClickListener){
         this.parkingLotdtos = dtos;
         this.getParkingLotdtosFilter = dtos;
         this.context = context;
+        this.userClickListener = userClickListener;
     }
 
     @NonNull
@@ -49,6 +55,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
         String city = searchedParkingLotDto.getCity();
         holder.parkingLotName.setText(parkingLot);
         holder.city.setText(city);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userClickListener.selectedParkingLot(searchedParkingLotDto);
+            }
+        });
     }
 
     @Override
@@ -67,10 +80,13 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
                     filterResults.count = getParkingLotdtosFilter.size();
                 }
                 else {
-                    String searchStr = charSequence.toString().toLowerCase(Locale.ROOT);
+                    String searchStr = charSequence.toString();
                     List<SearchedParkingLotDto> lotDtos = new ArrayList<>();
                     for(SearchedParkingLotDto lotDto: getParkingLotdtosFilter){
-                        if(lotDto.getParkingLotName().contains(searchStr) || lotDto.getCity().contains(searchStr)){
+                        if(lotDto.getCity().contains(searchStr)){
+                            lotDtos.add(lotDto);
+                        }
+                        else if(lotDto.getParkingLotName().contains(searchStr)){
                             lotDtos.add(lotDto);
                         }
                     }
