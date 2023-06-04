@@ -1,9 +1,11 @@
 package com.example.parkinglot.views;
 
 import android.content.Context;
+import android.util.Log;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 import com.example.parkinglot.R;
 import com.example.parkinglot.views.adapter.PAdapter;
 import com.lxj.xpopup.core.BottomPopupView;
@@ -13,8 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PagerBottomPopup extends BottomPopupView {
-    public PagerBottomPopup(@NonNull Context context) {
+    private final String TAG = PagerBottomPopup.class.getSimpleName();
+    private ViewPager2 pager;
+    private final String title;
+    private final String[] content;
+
+    public PagerBottomPopup(@NonNull Context context, String title, String[] content) {
         super(context);
+        this.title = title;
+        this.content = content;
     }
 
     @Override
@@ -22,23 +31,17 @@ public class PagerBottomPopup extends BottomPopupView {
         return R.layout.custom_view_pager;
     }
 
-    ViewPager pager;
-
     @Override
     protected void onCreate() {
         super.onCreate();
         pager = findViewById(R.id.pager);
-//        FragmentActivity activity = (FragmentActivity) getContext();
-//        pager.setAdapter(new PAdapter(activity.getSupportFragmentManager()));
-
+        FragmentActivity activity = (FragmentActivity) getContext();
+        pager.setAdapter(new PAdapter(activity.getSupportFragmentManager(), activity.getLifecycle(), content));
+        TextView TextView = findViewById(R.id.title);
+        TextView.setText(title);
 //        ViewGroup.MarginLayoutParams params = (MarginLayoutParams) getPopupContentView().getLayoutParams();
 //        params.bottomMargin = 200;
 //        getPopupContentView().setLayoutParams(params);
-    }
-
-    public void setAdapter(PAdapter pAdapter) {
-        FragmentActivity activity = (FragmentActivity) getContext();
-        pager.setAdapter(pAdapter);
     }
 
     @Override
@@ -51,11 +54,13 @@ public class PagerBottomPopup extends BottomPopupView {
     @Override
     protected void onShow() {
         super.onShow();
+        Log.d(TAG, "onShow");
     }
 
     @Override
     protected void onDismiss() {
         super.onDismiss();
+        Log.d(TAG, "onDismiss");
     }
 
     @Override

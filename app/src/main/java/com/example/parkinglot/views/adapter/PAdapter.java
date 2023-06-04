@@ -3,39 +3,30 @@ package com.example.parkinglot.views.adapter;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentPagerAdapter;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.PagerAdapter;
+import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.parkinglot.views.TestFragment;
 
-public class PAdapter extends FragmentStatePagerAdapter {
-    String[] titles;
-    public PAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+public class PAdapter extends FragmentStateAdapter {
+    String[] content;
+
+    public PAdapter(@NonNull FragmentManager fm, Lifecycle lifecycle) {
+        super(fm, lifecycle);
     }
 
-    public PAdapter(@NonNull FragmentManager fm, String[] titles) {
-        super(fm);
-        this.titles = titles;
+    public PAdapter(@NonNull FragmentManager fm, Lifecycle lifecycle, String[] content) {
+        super(fm, lifecycle);
+        this.content = content;
     }
 
-
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+        return TestFragment.create(content[position]);
+    }
 
     @Override
-    public Fragment getItem(int position) {
-        return TestFragment.create("XPopup默认是Dialog实现，由于Android的限制，Dialog中默认无法使用Fragment。\n\n所以要想在弹窗中使用Fragment，要设置isViewMode(true).");
-    }
-
-
-
-    @Override
-    public int getCount() {
+    public int getItemCount() {
         return 1;
-    }
-
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return titles!=null ? titles[position] : "xpopup";
     }
 }

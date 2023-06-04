@@ -179,13 +179,13 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
 
     @Override
     public void selectedParkingLot(SearchedParkingLotDto searchedParkingLotDto) {
+        String title = searchedParkingLotDto.getParkingLotName();
+        String[] content = {"test"};
         new XPopup.Builder(getContext())
-//                        .hasShadowBg(false)
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
                 .isViewMode(true)
-                .asCustom(new PagerBottomPopup(getContext()))
+                .asCustom(new PagerBottomPopup(getContext(), title, content))
                 .show();
-
         Toast.makeText(this.getContext(), "停車場名字為" + searchedParkingLotDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
     }
 }
