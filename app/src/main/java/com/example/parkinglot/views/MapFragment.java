@@ -273,6 +273,8 @@ public class MapFragment extends Fragment implements
         @Override
         public void onCameraIdle() {
             super.onCameraIdle();
+            if(googleMap.getCameraPosition().zoom < 13)
+                return;
             if( visibleMarkers != null)
                 visibleMarkers.clear();
             visibleMarkers = myParkingLotMarkerList.stream().filter(myParkingLotMarker ->
@@ -313,7 +315,9 @@ public class MapFragment extends Fragment implements
     public class MarkerClusterRenderer extends DefaultClusterRenderer<MyParkingLotMarker> {   // 1
 
         private final Bitmap bitmap;
+        private final Bitmap bitmapNo;
         private final Canvas canvas;
+        private final Canvas canvasNo;
         private final Drawable drawable;
 
         public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<MyParkingLotMarker> clusterManager) {
@@ -321,7 +325,9 @@ public class MapFragment extends Fragment implements
             drawable = checkNotNull(ContextCompat.getDrawable(requireContext(), R.drawable.parking), "drawable is null");
             drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
             bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            bitmapNo = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
             canvas = new Canvas(bitmap);
+            canvasNo = new Canvas(bitmapNo);
             drawable.draw(canvas);
         }
 
@@ -334,8 +340,9 @@ public class MapFragment extends Fragment implements
 
         public void setSpecificColor(MyParkingLotMarker marker, int colorTint) {
             drawable.setTint(colorTint);
-            drawable.draw(canvas);
-            super.getMarker(marker).setIcon(BitmapDescriptorFactory.fromBitmap(bitmap));
+            drawable.draw(canvasNo);
+            if(super.getMarker(marker) != null)
+                super.getMarker(marker).setIcon(BitmapDescriptorFactory.fromBitmap(bitmapNo));
         }
     }
 }

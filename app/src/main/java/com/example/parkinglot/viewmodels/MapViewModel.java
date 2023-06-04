@@ -24,7 +24,7 @@ public class MapViewModel extends ViewModel {
 
     private final MutableLiveData<ParkingAvailabilityDTO> carParkAvailability = new MutableLiveData<>();
 
-    private final Map<String, String> carParkNameMappingAvailability = new HashMap<>();
+    private final Map<String, ParkingAvailabilityDTO> carParkNameMappingAvailability = new HashMap<>();
 
     public LiveData<List<ParkingLotEntity>> getData() {
         return parkingLots;
@@ -47,10 +47,15 @@ public class MapViewModel extends ViewModel {
     }
 
     public void doParkingAvailability(String carParkID, String carParkName, String city) {
+        if(carParkNameMappingAvailability.containsKey(carParkName)) {
+            carParkAvailability.setValue(carParkNameMappingAvailability.get(carParkName));
+            return;
+        }
         tdxModel.getParkingAvailability(carParkID ,city, (success, availability) -> {
             if (success) {
-                carParkAvailability.postValue(new ParkingAvailabilityDTO(carParkID, carParkName, availability));
-                carParkNameMappingAvailability.put(carParkName, availability);
+                ParkingAvailabilityDTO parkingAvailabilityDTO = new ParkingAvailabilityDTO(carParkID, carParkName, availability);
+                carParkAvailability.postValue(parkingAvailabilityDTO);
+                carParkNameMappingAvailability.put(carParkName, parkingAvailabilityDTO);
             }
             else
                 carParkAvailability.postValue(new ParkingAvailabilityDTO(carParkID, carParkName, "Not available"));
@@ -58,6 +63,8 @@ public class MapViewModel extends ViewModel {
     }
 
     public String doParkingAvailability(String carParkName) {
-        return carParkNameMappingAvailability.get(carParkName);
+        if( carParkNameMappingAvailability.get(carParkName) != null)
+            return carParkNameMappingAvailability.get(carParkName).getAvailability();
+        return "Not available";
     }
 }
