@@ -9,16 +9,14 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parkinglot.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-import dto.SearchedParkingLotDto;
+import com.example.parkinglot.dto.SearchedParkingLotDto;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh> implements Filterable {
 

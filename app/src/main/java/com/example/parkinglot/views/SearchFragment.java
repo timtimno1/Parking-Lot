@@ -1,7 +1,5 @@
 package com.example.parkinglot.views;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.*;
 import android.widget.Toast;
@@ -10,27 +8,20 @@ import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
-import com.example.parkinglot.dao.ParkingLotDao;
-import com.example.parkinglot.entity.ParkingLotEntity;
-import com.example.parkinglot.models.TdxModel;
-import com.example.parkinglot.utils.Cities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.zip.Inflater;
 
 import com.lxj.xpopup.XPopup;
-import dto.SearchedParkingLotDto;
+import com.example.parkinglot.dto.SearchedParkingLotDto;
 
 /**
  * A simple {@link Fragment} subclass.
