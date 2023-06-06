@@ -20,8 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.parkinglot.entity.ParkingLotEntity;
 import com.lxj.xpopup.XPopup;
-import com.example.parkinglot.dto.SearchedParkingLotDto;
+import com.example.parkinglot.dto.ParkingLotInfoDto;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -43,12 +44,10 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
 
     Toolbar toolbar;
 
-    List<String> parkingLotName = new ArrayList<>();
+    List<ParkingLotInfoDto> parkingLotInfoDtos = new ArrayList<>();
 
-    List<String> city = new ArrayList<>();
-
-    List<SearchedParkingLotDto> searchedParkingLotDtos = new ArrayList<>();
     UserAdapter userAdapter;
+
     RecyclerView recyclerView;
 
     public SearchFragment() {
@@ -102,8 +101,9 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
 
     public void getAllParkingLotName(){
         new Thread(() ->{
-            parkingLotName = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotName();
-            city = ParkingLotDataBase.getInstance().parkingLotDao().defaultParkingLotCity();
+            ParkingLotDataBase.getInstance().parkingLotDao().getAll().forEach(parkingLot -> {
+                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+            });
             getActivity().runOnUiThread(() -> preAdapter());
         }).start();
     }
@@ -114,13 +114,7 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
     }
 
     public void preAdapter(){
-        for(int i = 0; i < parkingLotName.size(); i++){
-            String name = parkingLotName.get(i);
-            String cityName = translateCityToChinese(city.get(i));
-            SearchedParkingLotDto dto = new SearchedParkingLotDto(name, cityName);
-            searchedParkingLotDtos.add(dto);
-        }
-        userAdapter = new UserAdapter(searchedParkingLotDtos, this.getContext(), this::selectedParkingLot);
+        userAdapter = new UserAdapter(parkingLotInfoDtos, this.getContext(), this);
         recyclerView.setAdapter(userAdapter);
     }
     @Override
@@ -169,14 +163,13 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
     }
 
     @Override
-    public void selectedParkingLot(SearchedParkingLotDto searchedParkingLotDto) {
-        String title = searchedParkingLotDto.getParkingLotName();
+    public void selectedParkingLot(ParkingLotInfoDto parkingLotInfoDto) {
         String[] content = {"test"};
         new XPopup.Builder(getContext())
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
                 .isViewMode(true)
-                .asCustom(new PagerBottomPopup(getContext(), title, content))
+                .asCustom(new PagerBottomPopup(getContext(), parkingLotInfoDto))
                 .show();
-        Toast.makeText(this.getContext(), "停車場名字為" + searchedParkingLotDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
+        Toast.makeText(this.getContext(), "停車場名字為" + parkingLotInfoDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
     }
 }

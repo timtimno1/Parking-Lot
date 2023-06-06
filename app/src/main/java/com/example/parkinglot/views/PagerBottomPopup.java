@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.parkinglot.R;
+import com.example.parkinglot.dto.ParkingLotInfoDto;
 import com.example.parkinglot.views.adapter.PAdapter;
 import com.lxj.xpopup.core.BottomPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
@@ -17,13 +18,11 @@ import java.util.List;
 public class PagerBottomPopup extends BottomPopupView {
     private final String TAG = PagerBottomPopup.class.getSimpleName();
     private ViewPager2 pager;
-    private final String title;
-    private final String[] content;
+    private ParkingLotInfoDto parkingLotInfoDto;
 
-    public PagerBottomPopup(@NonNull Context context, String title, String[] content) {
+    public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto) {
         super(context);
-        this.title = title;
-        this.content = content;
+        this.parkingLotInfoDto = parkingLotInfoDto;
     }
 
     @Override
@@ -36,9 +35,9 @@ public class PagerBottomPopup extends BottomPopupView {
         super.onCreate();
         pager = findViewById(R.id.pager);
         FragmentActivity activity = (FragmentActivity) getContext();
-        pager.setAdapter(new PAdapter(activity.getSupportFragmentManager(), activity.getLifecycle(), content));
+        pager.setAdapter(new PAdapter(activity.getSupportFragmentManager(), activity.getLifecycle(), parkingLotInfoDto));
         TextView TextView = findViewById(R.id.title);
-        TextView.setText(title);
+        TextView.setText(parkingLotInfoDto.getParkingLotName());
 //        ViewGroup.MarginLayoutParams params = (MarginLayoutParams) getPopupContentView().getLayoutParams();
 //        params.bottomMargin = 200;
 //        getPopupContentView().setLayoutParams(params);

@@ -16,22 +16,22 @@ import com.example.parkinglot.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.parkinglot.dto.SearchedParkingLotDto;
+import com.example.parkinglot.dto.ParkingLotInfoDto;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh> implements Filterable {
 
-    public List<SearchedParkingLotDto> parkingLotdtos = new ArrayList<>();
+    public List<ParkingLotInfoDto> parkingLotdtos = new ArrayList<>();
 
-    public List<SearchedParkingLotDto> getParkingLotdtosFilter = new ArrayList<>();
+    public List<ParkingLotInfoDto> getParkingLotdtosFilter = new ArrayList<>();
 
     public Context context;
 
     public UserClickListener userClickListener;
     public interface UserClickListener{
-        void selectedParkingLot(SearchedParkingLotDto searchedParkingLotDto);
+        void selectedParkingLot(ParkingLotInfoDto parkingLotInfoDto);
     }
 
-    public UserAdapter(List<SearchedParkingLotDto> dtos, Context context, UserClickListener userClickListener){
+    public UserAdapter(List<ParkingLotInfoDto> dtos, Context context, UserClickListener userClickListener){
         this.parkingLotdtos = dtos;
         this.getParkingLotdtosFilter = dtos;
         this.context = context;
@@ -48,16 +48,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
 
     @Override
     public void onBindViewHolder(@NonNull UserAdapterVh holder, int position) {
-        SearchedParkingLotDto searchedParkingLotDto = parkingLotdtos.get(position);
-        String parkingLot = searchedParkingLotDto.getParkingLotName();
-        String city = searchedParkingLotDto.getCity();
+        ParkingLotInfoDto parkingLotInfoDto = parkingLotdtos.get(position);
+        String parkingLot = parkingLotInfoDto.getParkingLotName();
+        String city = parkingLotInfoDto.getCity();
         holder.parkingLotName.setText(parkingLot);
         holder.city.setText(city);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userClickListener.selectedParkingLot(searchedParkingLotDto);
+                userClickListener.selectedParkingLot(parkingLotInfoDto);
             }
         });
     }
@@ -79,8 +79,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
                 }
                 else {
                     String searchStr = charSequence.toString();
-                    List<SearchedParkingLotDto> lotDtos = new ArrayList<>();
-                    for(SearchedParkingLotDto lotDto: getParkingLotdtosFilter){
+                    List<ParkingLotInfoDto> lotDtos = new ArrayList<>();
+                    for(ParkingLotInfoDto lotDto: getParkingLotdtosFilter){
                         if(lotDto.getCity().contains(searchStr)){
                             lotDtos.add(lotDto);
                         }
@@ -97,7 +97,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                parkingLotdtos = (List<SearchedParkingLotDto>) filterResults.values;
+                parkingLotdtos = (List<ParkingLotInfoDto>) filterResults.values;
                 notifyDataSetChanged();
             }
         };

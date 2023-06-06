@@ -2,7 +2,9 @@ package com.example.parkinglot.entity;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+import com.example.parkinglot.dto.ParkingLotInfoDto;
 
 @Entity(tableName="parkingLot")
 public class ParkingLotEntity {
@@ -42,4 +44,14 @@ public class ParkingLotEntity {
 
     @ColumnInfo(name = "longitude")
     public double longitude;
+
+    @Ignore
+    public static ParkingLotInfoDto toParkingLotInfoDto(ParkingLotEntity parkingLotEntity) {
+        ParkingLotInfoDto parkingLotInfoDto = new ParkingLotInfoDto(parkingLotEntity.parkingLotName, parkingLotEntity.city);
+        parkingLotInfoDto.setAddress(parkingLotEntity.address);
+        parkingLotInfoDto.setPhoneNumber(parkingLotEntity.phoneNumber);
+        parkingLotInfoDto.setPrice(parkingLotEntity.fareDescription);
+        parkingLotInfoDto.setOpeningHours("24 hours");
+        return parkingLotInfoDto;
+    }
 }
