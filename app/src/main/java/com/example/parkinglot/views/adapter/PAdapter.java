@@ -5,7 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-import com.example.parkinglot.views.TestFragment;
+import com.example.parkinglot.views.ParkingLotInfoPage;
 
 public class PAdapter extends FragmentStateAdapter {
     String[] content;
@@ -22,7 +22,7 @@ public class PAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return TestFragment.create(content[position]);
+        return ParkingLotInfoPage.create(content[position]);
     }
 
     @Override
