@@ -3,18 +3,37 @@
               android:orientation="vertical" android:layout_width="match_parent"
               android:background="#fff"
               android:layout_height="wrap_content">
-    <com.google.android.material.appbar.AppBarLayout
+    <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:background="#fff"
-            android:layout_height="wrap_content">
-        <TextView
-                android:id="@+id/title"
-                android:text="下面是：ViewPager + Fragment"
-                android:textSize="20sp"
-                android:padding="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-    </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="match_parent"
+
+    >
+
+        <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="0dp"
+                android:background="#fff"
+                android:layout_height="wrap_content"
+                android:layout_weight="5">
+            <TextView
+                    android:id="@+id/title"
+                    android:text="下面是：ViewPager + Fragment"
+                    android:textSize="20sp"
+                    android:padding="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+        </com.google.android.material.appbar.AppBarLayout>
+        <!-- Button with icon       -->
+        <ImageButton
+                android:src="@drawable/ic_favorite_add"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/favorite_button"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:background="@null"
+        />
+    </LinearLayout>
     <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
             android:layout_width="match_parent"
