@@ -3,7 +3,7 @@ package com.example.parkinglot.models;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.example.parkinglot.ParkingLotDataBase;
 import androidx.test.core.app.ApplicationProvider;
-import com.example.parkinglot.dao.ParkingLotDao;
+import com.example.parkinglot.models.dao.ParkingLotDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.views.MainActivity;
 import org.junit.After;

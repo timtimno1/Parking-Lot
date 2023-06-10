@@ -2,8 +2,8 @@ package com.example.parkinglot.models;
 
 import android.util.Log;
 import com.example.parkinglot.ParkingLotDataBase;
-import com.example.parkinglot.dao.ParkingLotDao;
-import com.example.parkinglot.dao.TdxTokenDao;
+import com.example.parkinglot.models.dao.ParkingLotDao;
+import com.example.parkinglot.models.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.service.TdxService;

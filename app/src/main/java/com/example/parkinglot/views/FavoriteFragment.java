@@ -23,7 +23,7 @@ import java.util.List;
  * Use the {@link FavoriteFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FavoriteFragment extends Fragment implements UserAdapter.UserClickListener{
+public class FavoriteFragment extends Fragment implements ParkingLotRowAdapter.UserClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,7 +35,7 @@ public class FavoriteFragment extends Fragment implements UserAdapter.UserClickL
 
     List<ParkingLotInfoDto> parkingLotInfoDtos = new ArrayList<>();
 
-    UserAdapter userAdapter;
+    ParkingLotRowAdapter userAdapter;
 
     RecyclerView recyclerView;
 
@@ -90,13 +90,13 @@ public class FavoriteFragment extends Fragment implements UserAdapter.UserClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_search, container, false);
-        recyclerView = view.findViewById(R.id.parkingLotList);
+        View view = inflater.inflate(R.layout.fragment_favorite, container, false);
+        recyclerView = view.findViewById(R.id.parkingLotList2);
         recyclerView.setAdapter(userAdapter);
-        toolbar = view.findViewById(R.id.toolbar);
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setTitle("收藏");
+//        toolbar = view.findViewById(R.id.toolbar2);
+//        AppCompatActivity activity = (AppCompatActivity) getActivity();
+//        activity.setSupportActionBar(toolbar);
+//        activity.getSupportActionBar().setTitle("收藏");
         setHasOptionsMenu(true);
         return view;
     }
@@ -126,14 +126,15 @@ public class FavoriteFragment extends Fragment implements UserAdapter.UserClickL
             userAdapter.notifyDataSetChanged();
             return;
         }
-        userAdapter = new UserAdapter(parkingLotInfoDtos, this.getContext(), this);
+        userAdapter = new ParkingLotRowAdapter(parkingLotInfoDtos, this.getContext(), this);
         recyclerView.setAdapter(userAdapter);
     }
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.nav_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.search_View);
+        inflater.inflate(R.menu.nav_menu2, menu);
+        MenuItem menuItem = menu.findItem(R.id.search_View2);
+        MenuItem filter = menu.findItem(R.id.filter2);
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

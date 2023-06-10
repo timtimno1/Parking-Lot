@@ -4,8 +4,8 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.example.parkinglot.dao.ParkingLotDao;
-import com.example.parkinglot.dao.TdxTokenDao;
+import com.example.parkinglot.models.dao.ParkingLotDao;
+import com.example.parkinglot.models.dao.TdxTokenDao;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.views.MainActivity;

@@ -29,7 +29,7 @@ import com.example.parkinglot.dto.ParkingLotInfoDto;
  * Use the {@link SearchFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SearchFragment extends Fragment implements UserAdapter.UserClickListener{
+public class SearchFragment extends Fragment implements ParkingLotRowAdapter.UserClickListener{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,9 +46,10 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
 
     List<ParkingLotInfoDto> parkingLotInfoDtos = new ArrayList<>();
 
-    UserAdapter userAdapter;
+    ParkingLotRowAdapter parkingLotRowAdapter;
 
     RecyclerView recyclerView;
+
 
     public SearchFragment() {
         // Required empty public constructor
@@ -78,7 +79,7 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
 
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         recyclerView = view.findViewById(R.id.parkingLotList);
-        recyclerView.setAdapter(userAdapter);
+        recyclerView.setAdapter(parkingLotRowAdapter);
         toolbar = view.findViewById(R.id.toolbar);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(toolbar);
@@ -114,13 +115,14 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
     }
 
     public void preAdapter(){
-        userAdapter = new UserAdapter(parkingLotInfoDtos, this.getContext(), this);
-        recyclerView.setAdapter(userAdapter);
+        parkingLotRowAdapter = new ParkingLotRowAdapter(parkingLotInfoDtos, this.getContext(), this);
+        recyclerView.setAdapter(parkingLotRowAdapter);
     }
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         inflater.inflate(R.menu.nav_menu, menu);
         MenuItem menuItem = menu.findItem(R.id.search_View);
+        MenuItem filter = menu.findItem(R.id.filter);
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -132,11 +134,27 @@ public class SearchFragment extends Fragment implements UserAdapter.UserClickLis
             @Override
             public boolean onQueryTextChange(String s) {
                 String searchStr = s;
-                userAdapter.getFilter().filter(s);
+                parkingLotRowAdapter.getFilter().filter(s);
                 return false;
             }
         });
+        filter.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(@NonNull MenuItem menuItem) {
+                new XPopup.Builder(getContext())
+                        .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                        .isViewMode(true)
+                        .asCustom(new CenterPopup(getContext(), parkingLotRowAdapter))
+                        .show();
+                return true;
+            }
+        });
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     public String translateCityToChinese(String city) {

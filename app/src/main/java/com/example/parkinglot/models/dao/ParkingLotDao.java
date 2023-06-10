@@ -1,4 +1,4 @@
-package com.example.parkinglot.dao;
+package com.example.parkinglot.models.dao;
 
 import androidx.room.Dao;
 import androidx.room.Delete;

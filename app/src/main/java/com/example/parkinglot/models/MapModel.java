@@ -1,7 +1,7 @@
 package com.example.parkinglot.models;
 
 import com.example.parkinglot.ParkingLotDataBase;
-import com.example.parkinglot.dao.ParkingLotDao;
+import com.example.parkinglot.models.dao.ParkingLotDao;
 import com.example.parkinglot.viewmodels.callback.OnParkingLotDataCallBack;
 
 public class MapModel {

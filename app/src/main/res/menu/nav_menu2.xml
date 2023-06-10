@@ -2,13 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/search_View"
+        android:id="@+id/search_View2"
         android:icon="@drawable/search_bar"
         android:title="Search View"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
     <item
-        android:id="@+id/filter"
+        android:id="@+id/filter2"
         android:title="filter"
         android:icon="@drawable/filter_icon"
         app:showAsAction="ifRoom"

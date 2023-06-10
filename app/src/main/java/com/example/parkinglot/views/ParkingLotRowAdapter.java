@@ -18,7 +18,7 @@ import java.util.List;
 
 import com.example.parkinglot.dto.ParkingLotInfoDto;
 
-public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh> implements Filterable {
+public class ParkingLotRowAdapter extends RecyclerView.Adapter<ParkingLotRowAdapter.UserAdapterVh> implements Filterable {
 
     public List<ParkingLotInfoDto> parkingLotdtos = new ArrayList<>();
 
@@ -31,7 +31,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
         void selectedParkingLot(ParkingLotInfoDto parkingLotInfoDto);
     }
 
-    public UserAdapter(List<ParkingLotInfoDto> dtos, Context context, UserClickListener userClickListener){
+    public ParkingLotRowAdapter(List<ParkingLotInfoDto> dtos, Context context, UserClickListener userClickListener){
         this.parkingLotdtos = dtos;
         this.getParkingLotdtosFilter = dtos;
         this.context = context;
@@ -113,5 +113,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserAdapterVh>
             parkingLotName = itemView.findViewById(R.id.parkingLot);
             city = itemView.findViewById(R.id.city);
         }
+    }
+
+    public void clear() {
+        List<ParkingLotInfoDto> temp = new ArrayList<>();
+        int size = this.getItemCount();
+        if(size > 0) {
+            for (int i = 0; i < size; i++) {
+                temp.add(parkingLotdtos.get(i));
+            }
+        }
+        
     }
 }
