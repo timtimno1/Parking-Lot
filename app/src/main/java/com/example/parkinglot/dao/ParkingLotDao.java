@@ -38,4 +38,10 @@ public interface ParkingLotDao {
     @Query("SELECT city FROM parkingLot")
     List<String> defaultParkingLotCity();
 
+    @Query("SELECT * FROM parkingLOt WHERE isFavorite = 1")
+    List<ParkingLotEntity> getFavoriteParkingLots();
+
+    @Query("UPDATE parkingLot SET isFavorite = :isFavorite WHERE parkingLotName = :parkingLotName")
+    void updateFavorite(String parkingLotName, boolean isFavorite);
+
 }

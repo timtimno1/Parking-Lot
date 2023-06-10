@@ -10,7 +10,7 @@ import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.entity.TdxTokenEntity;
 import com.example.parkinglot.views.MainActivity;
 
-@Database(entities = {ParkingLotEntity.class, TdxTokenEntity.class}, version = 3)
+@Database(entities = {ParkingLotEntity.class, TdxTokenEntity.class}, version = 4)
 public abstract class ParkingLotDataBase extends RoomDatabase {
     private static ParkingLotDataBase instance = null;
 

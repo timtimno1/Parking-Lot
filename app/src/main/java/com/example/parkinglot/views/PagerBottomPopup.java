@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
+import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
 import com.example.parkinglot.dto.ParkingLotInfoDto;
 import com.example.parkinglot.views.adapter.PAdapter;
@@ -50,7 +51,10 @@ public class PagerBottomPopup extends BottomPopupView {
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getContext(), "test", Toast.LENGTH_SHORT).show();
+                new Thread(() -> {
+                    ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), true);
+                }).start();
+                Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
             }
         });
 

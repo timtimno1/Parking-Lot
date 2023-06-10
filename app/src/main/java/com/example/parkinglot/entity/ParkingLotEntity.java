@@ -45,6 +45,9 @@ public class ParkingLotEntity {
     @ColumnInfo(name = "longitude")
     public double longitude;
 
+    @ColumnInfo(name = "isFavorite")
+    public boolean isFavorite;
+
     @Ignore
     public static ParkingLotInfoDto toParkingLotInfoDto(ParkingLotEntity parkingLotEntity) {
         ParkingLotInfoDto parkingLotInfoDto = new ParkingLotInfoDto(parkingLotEntity.parkingLotName, parkingLotEntity.city);
@@ -52,6 +55,7 @@ public class ParkingLotEntity {
         parkingLotInfoDto.setPhoneNumber(parkingLotEntity.phoneNumber);
         parkingLotInfoDto.setPrice(parkingLotEntity.fareDescription);
         parkingLotInfoDto.setOpeningHours("24 hours");
+        parkingLotInfoDto.setIsFavorite(parkingLotEntity.isFavorite);
         return parkingLotInfoDto;
     }
 }

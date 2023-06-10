@@ -9,6 +9,7 @@ public class ParkingLotInfoDto implements Serializable {
     private String phoneNumber;
     private String price;
     private String openingHours;
+    private boolean isFavorite;
 
 
     public String getAddress() {
@@ -62,5 +63,9 @@ public class ParkingLotInfoDto implements Serializable {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public void setIsFavorite(boolean isFavorite) {
+        this.isFavorite = isFavorite;
     }
 }
