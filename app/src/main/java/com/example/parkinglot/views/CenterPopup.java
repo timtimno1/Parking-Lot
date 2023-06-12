@@ -234,7 +234,7 @@ class CenterPopup extends CenterPopupView {
                         }
                     }
                 }
-                else if(currentIsGround == "否") {
+                else if(currentIsGround == "不是") {
                     if(currentIsFavorite == "全選") {
                         if(currentCity == "全選") {
                             ParkingLotDataBase.getInstance().parkingLotDao().getFilterNotGround(ground).forEach(parkingLot -> {
