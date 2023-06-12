@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
 import com.example.parkinglot.R;
 
 /**
@@ -24,6 +28,12 @@ public class ContactFragment extends Fragment {
     private String mParam1;
 
     private String mParam2;
+
+    String feedBackName;
+
+    String feedBackEmail;
+
+    String feedBackMessage;
 
     public ContactFragment() {
         // Required empty public constructor
@@ -59,6 +69,21 @@ public class ContactFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contact, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact, container, false);
+        EditText name = view.findViewById(R.id.feedBackName);
+        EditText email = view.findViewById(R.id.feedBackEmail);
+        EditText message = view.findViewById(R.id.feedBackMessage);
+
+        Button button = view.findViewById(R.id.subnitFeedback);
+        button.setOnClickListener(view1 -> {
+            feedBackName = name.getText().toString();
+            feedBackEmail = email.getText().toString();
+            feedBackMessage = message.getText().toString();
+            name.setText(null);
+            email.setText(null);
+            message.setText(null);
+            Toast.makeText(getContext(), "感謝您的回報，我們會盡快處理", Toast.LENGTH_LONG).show();
+        });
+        return view;
     }
 }

@@ -8,14 +8,19 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+
+import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
 import com.example.parkinglot.dto.ParkingLotInfoDto;
+import com.example.parkinglot.entity.ParkingLotEntity;
 import com.lxj.xpopup.animator.PopupAnimator;
 import com.lxj.xpopup.core.CenterPopupView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class CenterPopup extends CenterPopupView {
 
@@ -41,7 +46,6 @@ class CenterPopup extends CenterPopupView {
 
     List<ParkingLotInfoDto> parkingLotInfoDtos = new ArrayList<>();
 
-    //注意：自定义弹窗本质是一个自定义View，但是只需重写一个参数的构造，其他的不要重写，所有的自定义弹窗都是这样。
     public CenterPopup(@NonNull Context context, ParkingLotRowAdapter p) {
         super(context);
         this.parkingLotRowAdapter = p;
@@ -145,8 +149,8 @@ class CenterPopup extends CenterPopupView {
         findViewById(R.id.tv_confirm).setOnClickListener(v -> {
             sharedPreferences.edit().putString("isFavorite", currentIsFavorite).putString("isGround", currentIsGround).putString("City", currentCity).commit();
             Toast.makeText(getHostWindow().getContext(), "城市為" + currentCity + ", " + currentIsGround + "地下停車場, " + currentIsFavorite + "最愛", Toast.LENGTH_SHORT).show();
-            dismiss();
             changeRecyclerViewItem();
+            dismiss();
         });
         findViewById(R.id.tv_cancel).setOnClickListener(view -> dismiss());
     }
@@ -163,7 +167,131 @@ class CenterPopup extends CenterPopupView {
     }
 
     public void changeRecyclerViewItem() {
+        new Thread(() ->{
+            if(currentIsGround == "全選") {
+                if(currentIsFavorite == "全選") {
+                    if(currentCity == "全選") {
+                        ParkingLotDataBase.getInstance().parkingLotDao().getAll().forEach(parkingLot -> {
+                            parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                        });
+                    }
+                    else {
+                        String cityEnglish = translateCityToEnglish(currentCity);
+                        ParkingLotDataBase.getInstance().parkingLotDao().getFilterCity(cityEnglish).forEach(parkingLot -> {
+                            parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                        });
+                    }
+                }
+                else {
+                    boolean flag = false;
+                    if(currentIsFavorite == "是") {
+                        flag = true;
+                    }
+                    if(currentCity == "全選") {
+                        ParkingLotDataBase.getInstance().parkingLotDao().getFilterIsFavorite(flag).forEach(parkingLot -> {
+                            parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                        });
+                    }
+                    else {
+                        String cityEnglish = translateCityToEnglish(currentCity);
+                        ParkingLotDataBase.getInstance().parkingLotDao().getFilterCityAndIsFavorite(cityEnglish, flag).forEach(parkingLot -> {
+                            parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                        });
+                    }
+                }
+            }
+            else {
+                String ground = "%地下%";
+                if(currentIsGround == "是") {
+                    if(currentIsFavorite == "全選") {
+                        if(currentCity == "全選") {
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterIsGround(ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                        else {
+                            String cityEnglish = translateCityToEnglish(currentCity);
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterCityAndIsGround(cityEnglish, ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                    }
+                    else {
+                        boolean flag = false;
+                        if(currentIsFavorite == "是") {
+                            flag = true;
+                        }
+                        if(currentCity == "全選") {
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterFavoriteAndIsGround(flag, ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                        else {
+                            String cityEnglish = translateCityToEnglish(currentCity);
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterCityAndFavoriteAndIsGround(cityEnglish, ground, flag).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                    }
+                }
+                else if(currentIsGround == "不是") {
+                    if(currentIsFavorite == "全選") {
+                        if(currentCity == "全選") {
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterNotGround(ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                        else {
+                            String cityEnglish = translateCityToEnglish(currentCity);
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterCityAndNotGround(cityEnglish, ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                    }
+                    else {
+                        boolean flag = false;
+                        if(currentIsFavorite == "是") {
+                            flag = true;
+                        }
+                        if(currentCity == "全選") {
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterFavoriteAndNotGround(flag, ground).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                        else {
+                            String cityEnglish = translateCityToEnglish(currentCity);
+                            ParkingLotDataBase.getInstance().parkingLotDao().getFilterCityAndFavoriteAndNotGround(cityEnglish, ground, flag).forEach(parkingLot -> {
+                                parkingLotInfoDtos.add(ParkingLotEntity.toParkingLotInfoDto(parkingLot));
+                            });
+                        }
+                    }
+                }
+            }
+            getActivity().runOnUiThread(()->parkingLotRowAdapter.UpdateRecyclerView(parkingLotInfoDtos));
+        }).start();
+    }
 
+    private String translateCityToEnglish(String city) {
+        Map<String, String> cityChineseMap = new HashMap<>();
+        cityChineseMap.put("臺北", "Taipei");
+        cityChineseMap.put("基隆", "Keelung");
+        cityChineseMap.put("桃園", "Taoyuan");
+        cityChineseMap.put("新竹", "Hsinchu");
+        cityChineseMap.put("花蓮", "HualienCounty");
+        cityChineseMap.put("宜蘭", "YilanCounty");
+        cityChineseMap.put("苗栗", "MiaoliCounty");
+        cityChineseMap.put("臺中", "Taichung");
+        cityChineseMap.put("南投", "NantouCounty");
+        cityChineseMap.put("嘉義", "Chiayi");
+        cityChineseMap.put("嘉義縣", "ChiayiCounty");
+        cityChineseMap.put("臺南", "Tainan");
+        cityChineseMap.put("高雄", "KaohsIung");
+        cityChineseMap.put("屏東", "PingtungCounty");
+        cityChineseMap.put("臺東", "TaitungCounty");
+        cityChineseMap.put("金門", "KinmenCounty");
+        cityChineseMap.put("連江縣", "LienchiangCounty");
+
+        return cityChineseMap.get(city);
     }
 
     // 设置最大宽度，看需要而定，
