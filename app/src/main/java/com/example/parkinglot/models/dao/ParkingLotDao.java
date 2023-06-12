@@ -44,4 +44,37 @@ public interface ParkingLotDao {
     @Query("UPDATE parkingLot SET isFavorite = :isFavorite WHERE parkingLotName = :parkingLotName")
     void updateFavorite(String parkingLotName, boolean isFavorite);
 
+    @Query("SELECT * FROM parkingLot WHERE parkingLotName LIKE :isGround")
+    List<ParkingLotEntity> getFilterIsGround(String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE parkingLotName not LIKE :isGround")
+    List<ParkingLotEntity> getFilterNotGround(String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE parkingLotName LIKE :isGround AND isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterFavoriteAndIsGround(boolean isFavorite, String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE parkingLotName not LIKE :isGround AND isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterFavoriteAndNotGround(boolean isFavorite, String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city")
+    List<ParkingLotEntity> getFilterCity(String city);
+
+    @Query("SELECT * FROM parkingLot WHERE isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterIsFavorite(boolean isFavorite);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city and isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterCityAndIsFavorite(String city, boolean isFavorite);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city and parkingLotName Like :isGround")
+    List<ParkingLotEntity> getFilterCityAndIsGround(String city, String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city and parkingLotName not Like :isGround")
+    List<ParkingLotEntity> getFilterCityAndNotGround(String city, String isGround);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city and parkingLotName Like :isGround AND isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterCityAndFavoriteAndIsGround(String city, String isGround, boolean isFavorite);
+
+    @Query("SELECT * FROM parkingLot WHERE city=:city and parkingLotName not Like :isGround AND isFavorite=:isFavorite")
+    List<ParkingLotEntity> getFilterCityAndFavoriteAndNotGround(String city, String isGround, boolean isFavorite);
+
 }

@@ -24,6 +24,8 @@ public class ParkingLotRowAdapter extends RecyclerView.Adapter<ParkingLotRowAdap
 
     public List<ParkingLotInfoDto> getParkingLotdtosFilter = new ArrayList<>();
 
+    public List<ParkingLotInfoDto> temp = new ArrayList<>();
+
     public Context context;
 
     public UserClickListener userClickListener;
@@ -115,14 +117,22 @@ public class ParkingLotRowAdapter extends RecyclerView.Adapter<ParkingLotRowAdap
         }
     }
 
-    public void clear() {
-        List<ParkingLotInfoDto> temp = new ArrayList<>();
+    private void clear() {
         int size = this.getItemCount();
         if(size > 0) {
             for (int i = 0; i < size; i++) {
                 temp.add(parkingLotdtos.get(i));
             }
         }
-        
+        parkingLotdtos.clear();
+    }
+
+    public void UpdateRecyclerView(List<ParkingLotInfoDto> updateTnfo) {
+        clear();
+        int size = updateTnfo.size();
+        for (int i = 0; i < size; i++) {
+            parkingLotdtos.add(updateTnfo.get(i));
+        }
+        notifyDataSetChanged();
     }
 }
