@@ -182,7 +182,6 @@ public class SearchFragment extends Fragment implements ParkingLotRowAdapter.Use
 
     @Override
     public void selectedParkingLot(ParkingLotInfoDto parkingLotInfoDto) {
-        String[] content = {"test"};
         new XPopup.Builder(getContext())
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
                 .isViewMode(true)

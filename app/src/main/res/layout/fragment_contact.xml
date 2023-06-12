@@ -8,6 +8,7 @@
     android:padding="16dp"
     tools:context=".views.ContactFragment">
 
+
     <TextView
         android:id="@+id/contact_form_title"
         android:layout_width="wrap_content"
