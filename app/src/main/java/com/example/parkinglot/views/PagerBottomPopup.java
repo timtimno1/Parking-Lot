@@ -28,9 +28,12 @@ public class PagerBottomPopup extends BottomPopupView {
     private ViewPager2 pager;
     private ParkingLotInfoDto parkingLotInfoDto;
 
-    public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto) {
+    private ParkingLotRowAdapter parkingLotRowAdapter;
+
+    public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto, ParkingLotRowAdapter parkingLotRowAdapter) {
         super(context);
         this.parkingLotInfoDto = parkingLotInfoDto;
+        this.parkingLotRowAdapter = parkingLotRowAdapter;
     }
 
     @Override
@@ -47,14 +50,25 @@ public class PagerBottomPopup extends BottomPopupView {
         pager.setAdapter(new PAdapter(activity.getSupportFragmentManager(), activity.getLifecycle(), parkingLotInfoDto));
         TextView TextView = findViewById(R.id.title);
         TextView.setText(parkingLotInfoDto.getParkingLotName());
+
         ImageButton ib = (ImageButton) findViewById(R.id.favorite_button);
+
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread(() -> {
-                    ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), true);
+                    if(parkingLotInfoDto.getIsFavorite()) {
+                        ib.setImageResource(R.drawable.ic_heart_fill);
+                        ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), false);
+//                        Toast.makeText(getContext(), "取消收藏", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        ib.setImageResource(R.drawable.ic_heart_outline);
+                        ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), true);
+//                        Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
+                    }
+                    getActivity().runOnUiThread(() -> parkingLotRowAdapter.setChange());
                 }).start();
-                Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -68,4 +68,6 @@ public class ParkingLotInfoDto implements Serializable {
     public void setIsFavorite(boolean isFavorite) {
         this.isFavorite = isFavorite;
     }
+
+    public boolean getIsFavorite() {return isFavorite;}
 }
