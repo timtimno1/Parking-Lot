@@ -76,7 +76,6 @@ public class SearchFragment extends Fragment implements ParkingLotRowAdapter.Use
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         View view = inflater.inflate(R.layout.fragment_search, container, false);
         recyclerView = view.findViewById(R.id.parkingLotList);
         recyclerView.setAdapter(parkingLotRowAdapter);
@@ -189,5 +188,14 @@ public class SearchFragment extends Fragment implements ParkingLotRowAdapter.Use
                 .asCustom(new PagerBottomPopup(getContext(), parkingLotInfoDto))
                 .show();
 //        Toast.makeText(this.getContext(), "停車場名字為" + parkingLotInfoDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 }

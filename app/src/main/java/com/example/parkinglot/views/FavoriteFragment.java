@@ -91,7 +91,7 @@ public class FavoriteFragment extends Fragment implements ParkingLotRowAdapter.U
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
-        recyclerView = view.findViewById(R.id.parkingLotList2);
+        recyclerView = view.findViewById(R.id.parkingLotList);
         recyclerView.setAdapter(userAdapter);
 //        toolbar = view.findViewById(R.id.toolbar2);
 //        AppCompatActivity activity = (AppCompatActivity) getActivity();
