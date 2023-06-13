@@ -3,6 +3,7 @@ package com.example.parkinglot.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -28,9 +29,12 @@ public class PagerBottomPopup extends BottomPopupView {
     private ViewPager2 pager;
     private ParkingLotInfoDto parkingLotInfoDto;
 
-    public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto) {
+    private ParkingLotRowAdapter parkingLotRowAdapter;
+
+    public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto, ParkingLotRowAdapter parkingLotRowAdapter) {
         super(context);
         this.parkingLotInfoDto = parkingLotInfoDto;
+        this.parkingLotRowAdapter = parkingLotRowAdapter;
     }
 
     @Override
@@ -47,14 +51,34 @@ public class PagerBottomPopup extends BottomPopupView {
         pager.setAdapter(new PAdapter(activity.getSupportFragmentManager(), activity.getLifecycle(), parkingLotInfoDto));
         TextView TextView = findViewById(R.id.title);
         TextView.setText(parkingLotInfoDto.getParkingLotName());
+
         ImageButton ib = (ImageButton) findViewById(R.id.favorite_button);
+        if(parkingLotInfoDto.getIsFavorite()) {
+            ib.setSelected(true);
+        }
+        else {
+            ib.setSelected(false);
+        }
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 new Thread(() -> {
-                    ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), true);
+                    ParkingLotDataBase.getInstance().parkingLotDao().updateFavorite(parkingLotInfoDto.getParkingLotName(), !parkingLotInfoDto.getIsFavorite());
+                    parkingLotInfoDto.setIsFavorite(!parkingLotInfoDto.getIsFavorite());
+                    if(parkingLotInfoDto.getIsFavorite()) {
+                        ib.setSelected(true);
+                        Looper.prepare();
+                        Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                    else {
+                        ib.setSelected(false);
+                        Looper.prepare();
+                        Toast.makeText(getContext(), "取消收藏", Toast.LENGTH_SHORT).show();
+                        Looper.loop();
+                    }
+                    getActivity().runOnUiThread(() -> parkingLotRowAdapter.setChange());
                 }).start();
-                Toast.makeText(getContext(), "收藏成功", Toast.LENGTH_SHORT).show();
             }
         });
 

@@ -127,6 +127,10 @@ public class ParkingLotRowAdapter extends RecyclerView.Adapter<ParkingLotRowAdap
         parkingLotdtos.clear();
     }
 
+    public void setChange() {
+        notifyDataSetChanged();
+    }
+
     public void UpdateRecyclerView(List<ParkingLotInfoDto> updateTnfo) {
         clear();
         int size = updateTnfo.size();
