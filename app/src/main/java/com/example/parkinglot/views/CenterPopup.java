@@ -17,7 +17,6 @@ import com.lxj.xpopup.animator.PopupAnimator;
 import com.lxj.xpopup.core.CenterPopupView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

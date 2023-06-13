@@ -159,7 +159,7 @@ public class FavoriteFragment extends Fragment implements ParkingLotRowAdapter.U
         new XPopup.Builder(getContext())
                 .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
                 .isViewMode(true)
-                .asCustom(new PagerBottomPopup(getContext(), parkingLotInfoDto))
+                .asCustom(new PagerBottomPopup(getContext(), parkingLotInfoDto, userAdapter))
                 .show();
 //        Toast.makeText(this.getContext(), "停車場名字為" + parkingLotInfoDto.getParkingLotName(), Toast.LENGTH_SHORT).show(); //有抓到正在選擇的停車場了
     }
