@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -24,6 +25,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.parkinglot.R;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
@@ -77,6 +80,7 @@ public class MapFragment extends Fragment implements
     private final List<MyParkingLotMarker> myParkingLotMarkerList = new ArrayList<>();
 
     private Map<String, MyParkingLotMarker> visibleMarkers;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private static final String TAG = MapFragment.class.getSimpleName();
 
@@ -164,10 +168,15 @@ public class MapFragment extends Fragment implements
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-
-        CameraUpdate point = CameraUpdateFactory.newLatLngZoom(new LatLng(25.043383, 121.533264), 18.0f);
-        googleMap.moveCamera(point);
-        googleMap.animateCamera(point);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+            if (location != null) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                CameraUpdate point = CameraUpdateFactory.newLatLngZoom(latLng, 18.0f);
+                googleMap.moveCamera(point);
+                googleMap.animateCamera(point);
+            }
+        });
 
         try {
             // Customise the styling of the base map using a JSON object defined
