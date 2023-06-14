@@ -39,7 +39,7 @@ public class TdxModelTest {
         assertEquals("08", getCityPhonePrefix("PingtungCounty"));
         assertEquals("089", getCityPhonePrefix("TaitungCounty"));
         assertEquals("082", getCityPhonePrefix("KinmenCounty"));
-        assertEquals("0836", getCityPhonePrefix("LianjiangCounty"));
+        assertEquals("0836", getCityPhonePrefix("LienchiangCounty"));
         // Test unknown city
         try {
             getCityPhonePrefix("UnknownCity");

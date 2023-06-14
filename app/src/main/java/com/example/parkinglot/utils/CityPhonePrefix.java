@@ -29,7 +29,7 @@ public class CityPhonePrefix {
         cityPrefixMap.put("PingtungCounty", "08");
         cityPrefixMap.put("TaitungCounty", "089");
         cityPrefixMap.put("KinmenCounty", "082");
-        cityPrefixMap.put("LianjiangCounty", "0836");
+        cityPrefixMap.put("LienchiangCounty", "0836");
     }
 
     private CityPhonePrefix() {
