@@ -4,6 +4,8 @@ import static com.example.parkinglot.utils.CityPhonePrefix.autoAddRegionNumber;
 import static com.example.parkinglot.utils.CityPhonePrefix.getCityPhonePrefix;
 import static org.junit.Assert.*;
 
+import com.example.parkinglot.utils.Cities;
+import com.example.parkinglot.utils.CityPhonePrefix;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,7 @@ public class TdxModelTest {
         assertEquals("08", getCityPhonePrefix("PingtungCounty"));
         assertEquals("089", getCityPhonePrefix("TaitungCounty"));
         assertEquals("082", getCityPhonePrefix("KinmenCounty"));
-        assertEquals("0836", getCityPhonePrefix("LianjiangCounty"));
+        assertEquals("0836", getCityPhonePrefix("LienchiangCounty"));
         // Test unknown city
         try {
             getCityPhonePrefix("UnknownCity");
@@ -57,10 +59,13 @@ public class TdxModelTest {
         String legalNumberWithoutRegion1 = "4989295";
         String legalNumberWithoutRegion2 = "12345678";
         assertEquals("0928098455", autoAddRegionNumber(cellphone, null));
-        assertEquals("03-4989295", autoAddRegionNumber(legalNumberWithRegion1, "Taoyuan"));
-        assertEquals("024989295", autoAddRegionNumber(legalNumberWithRegion2, "Taoyuan"));
-        assertEquals("034989295", autoAddRegionNumber(legalNumberWithoutRegion1, "Taoyuan"));
-        assertEquals("0312345678", autoAddRegionNumber(legalNumberWithoutRegion2, "Taoyuan"));
+        assertEquals("03 - 4989295", autoAddRegionNumber(legalNumberWithRegion1, "Taoyuan"));
+        assertEquals("02 - 4989295", autoAddRegionNumber(legalNumberWithRegion2, "Taipei"));
+        assertEquals("03 - 4989295", autoAddRegionNumber(legalNumberWithoutRegion1, "Taoyuan"));
+        assertEquals("03 - 12345678", autoAddRegionNumber(legalNumberWithoutRegion2, "Taoyuan"));
+        for(Cities city : Cities.values()) {
+            assertEquals(CityPhonePrefix.getCityPhonePrefix(city.toString()) + " - 4989295", autoAddRegionNumber(legalNumberWithoutRegion1, city.toString()));
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)

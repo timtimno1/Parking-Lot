@@ -43,7 +43,7 @@ public class CitiesTest {
         Assert.assertEquals("Tainan", tainan.toString());
 
         Cities kaohsiung = Cities.KAOHSIUNG;
-        Assert.assertEquals("KaohsIung", kaohsiung.toString());
+        Assert.assertEquals("Kaohsiung", kaohsiung.toString());
 
         Cities pingtungCounty = Cities.PINGTUNGCOUNTY;
         Assert.assertEquals("PingtungCounty", pingtungCounty.toString());

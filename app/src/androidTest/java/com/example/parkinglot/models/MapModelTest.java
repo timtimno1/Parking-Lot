@@ -48,15 +48,16 @@ public class MapModelTest {
         CountDownLatch latch = new CountDownLatch(1);
         MapModel mapModel = new MapModel();
         mapModel.getParkingLotData((parkingLotEntities) -> {
-            assertEquals("testID", parkingLotEntities.get(0).carParkID);
-            assertEquals("test", parkingLotEntities.get(0).parkingLotName);
-            assertEquals("testAddress", parkingLotEntities.get(0).address);
-            assertEquals("testFare", parkingLotEntities.get(0).fareDescription);
-            assertEquals(100, parkingLotEntities.get(0).numberOfParkingSpace);
-            assertEquals(50, parkingLotEntities.get(0).remainingParkingSpace);
-            assertEquals(120.0, parkingLotEntities.get(0).latitude, 0.001);
-            assertEquals(120.0, parkingLotEntities.get(0).longitude, 0.001);
-            assertEquals("0912345678", parkingLotEntities.get(0).phoneNumber);
+            int parkingLotEntitiesSize = parkingLotEntities.size();
+            assertEquals("testID", parkingLotEntities.get(parkingLotEntitiesSize - 1).carParkID);
+            assertEquals("test", parkingLotEntities.get(parkingLotEntitiesSize - 1).parkingLotName);
+            assertEquals("testAddress", parkingLotEntities.get(parkingLotEntitiesSize - 1).address);
+            assertEquals("testFare", parkingLotEntities.get(parkingLotEntitiesSize - 1).fareDescription);
+            assertEquals(100, parkingLotEntities.get(parkingLotEntitiesSize - 1).numberOfParkingSpace);
+            assertEquals(50, parkingLotEntities.get(parkingLotEntitiesSize - 1).remainingParkingSpace);
+            assertEquals(120.0, parkingLotEntities.get(parkingLotEntitiesSize - 1).latitude, 0.001);
+            assertEquals(120.0, parkingLotEntities.get(parkingLotEntitiesSize - 1).longitude, 0.001);
+            assertEquals("0912345678", parkingLotEntities.get(parkingLotEntitiesSize - 1).phoneNumber);
             latch.countDown();
         });
 

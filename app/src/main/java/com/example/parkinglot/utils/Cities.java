@@ -26,7 +26,7 @@ public enum Cities {
 
     TAINAN("Tainan"),
 
-    KAOHSIUNG("KaohsIung"),
+    KAOHSIUNG("Kaohsiung"),
 
     PINGTUNGCOUNTY("PingtungCounty"),
 
