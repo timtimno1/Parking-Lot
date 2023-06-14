@@ -1,10 +1,13 @@
 package com.example.parkinglot.utils;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
+import com.google.android.gms.maps.model.LatLng;
 
 public class LatLongTest {
     private LatLong latLong;
@@ -39,5 +42,15 @@ public class LatLongTest {
     public void testToString() {
         assertEquals("LatLong [lat=25.04863, lon=121.519015]", latLong.toString());
     }
+    @Test
+    public void testConvertToLatLng() {
+        double lat = 37.7749;
+        double lon = -122.4194;
+        LatLong instance = new LatLong(lat, lon);
 
+        LatLng expectedLatLng = new LatLng(lat, lon);
+        LatLng actualLatLng = instance.convertToLatLng();
+
+        Assert.assertEquals(expectedLatLng, actualLatLng);
+    }
 }
