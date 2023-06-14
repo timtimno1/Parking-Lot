@@ -2,6 +2,7 @@ package com.example.parkinglot.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CityPhonePrefix {
@@ -29,7 +30,7 @@ public class CityPhonePrefix {
         cityPrefixMap.put("PingtungCounty", "08");
         cityPrefixMap.put("TaitungCounty", "089");
         cityPrefixMap.put("KinmenCounty", "082");
-        cityPrefixMap.put("LianjiangCounty", "0836");
+        cityPrefixMap.put("LienchiangCounty", "0836");
     }
 
     private CityPhonePrefix() {
@@ -61,10 +62,23 @@ public class CityPhonePrefix {
 
     // This method checks if the input number matches the pattern for a number in a specific region.
     private static boolean isMatchRegionNumber(String number) {
-        String pattern = "(\\d{2,3}-?|\\(\\d{2,3}\\))\\d{3,4}-?\\d{4}";
+        String pattern = "(\\d{2,3} ?-? ?|\\(\\d{2,3}\\))\\d{3,4}-?\\d{4}";
         Pattern cellPhonePattern = Pattern.compile(pattern);
         return cellPhonePattern.matcher(number).find();
     }
+
+    private static boolean isMatchRegionNumberWithDash(String number) {
+        String pattern = "(\\d{2,3}-|\\(\\d{2,3}\\))\\d{3,4}-?\\d{4}";
+        Pattern cellPhonePattern = Pattern.compile(pattern);
+        return cellPhonePattern.matcher(number).find();
+    }
+
+    private static boolean isMatchRegionNumberWithDashAndSpace(String number) {
+        String pattern = "(\\d{2,3} - ?|\\(\\d{2,3}\\))\\d{3,4}-\\d{4}";
+        Pattern cellPhonePattern = Pattern.compile(pattern);
+        return cellPhonePattern.matcher(number).find();
+    }
+
 
     /**
      * Adds region number to a given phone number if it is not already present and checks if the number is valid.
@@ -75,13 +89,31 @@ public class CityPhonePrefix {
      * @throws IllegalArgumentException If the provided phone number is not of valid length or format.
      */
     public static String autoAddRegionNumber(String number, String city) throws IllegalArgumentException {
+        if(isMatchCellphone(number))
+            return number;
+
+        String cityPrefix = "";
+        if(city != null) {
+            cityPrefix = CityPhonePrefix.getCityPhonePrefix(city);
+        }
         if (number.length() >= 7 && number.length() <= 10) {
-            if (!isMatchCellphone(number) && !isMatchRegionNumber(number)) {
-                return CityPhonePrefix.getCityPhonePrefix(city) + " - " + number;
-            } else
-                return number;
+            if(isMatchRegionNumber(number)) {
+                if (!isMatchRegionNumberWithDash(number)) {
+                    Pattern pattern = Pattern.compile("(" + cityPrefix + ")" + "(\\d*)");
+                    Matcher matcher = pattern.matcher(number);
+                    if(matcher.matches())
+                        return matcher.group(1) + " - " + matcher.group(2);
+                } else if (!isMatchRegionNumberWithDashAndSpace(number)) {
+                    return number.split("-")[0] + " - " + number.split("-")[1];
+                } else {
+                    return cityPrefix + " - " + number;
+                }
+            }
+            else
+                return cityPrefix + " - " + number;
         } else {
             throw new IllegalArgumentException("illegal number");
         }
+        return number;
     }
 }
