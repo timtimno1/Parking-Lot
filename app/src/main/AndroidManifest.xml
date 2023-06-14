@@ -13,17 +13,32 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.ParkingLot"
             tools:targetApi="31">
+
+        <service
+                android:name=".service.FMCService"
+                android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
                 android:name=".views.MainActivity"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <meta-data android:name="android.app.lib_name" android:value=""/>
         </activity>
 
         <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAcj3tw7FC1ieuNdTtSsl2QC0-yuQrIEIE"/>
+        <meta-data
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="test"
+                />
     </application>
 
 </manifest>

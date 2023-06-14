@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 import com.example.parkinglot.R;
+import com.example.parkinglot.dto.ParkingLotInfoDto;
 import com.example.parkinglot.entity.ParkingLotEntity;
 import com.example.parkinglot.viewmodels.MapViewModel;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.maps.android.clustering.ClusterItem;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.lxj.xpopup.XPopup;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -69,7 +71,7 @@ public class MapFragment extends Fragment implements
 
     private MapView mapView;
 
-    private Map<String, ParkingLotEntity> parkingLotEntitys;
+    private Map<String, ParkingLotEntity> parkingLotEntitys = new HashMap<>();
 
     private MapViewModel mapViewModel = new MapViewModel();
 
@@ -249,6 +251,7 @@ public class MapFragment extends Fragment implements
         carParkNameMappingCityName.clear();
         this.googleMap.setOnInfoWindowClickListener(this);
         for (ParkingLotEntity parkingLotEntity : parkingLotEntities) {
+            this.parkingLotEntitys.put(parkingLotEntity.parkingLotName, parkingLotEntity);
             carParkNameMappingID.put(parkingLotEntity.parkingLotName, parkingLotEntity.carParkID);
             carParkNameMappingCityName.put(parkingLotEntity.parkingLotName, parkingLotEntity.city);
             myParkingLotMarkerList.add(new MyParkingLotMarker(parkingLotEntity.latitude, parkingLotEntity.longitude, parkingLotEntity.parkingLotName, parkingLotEntity.phoneNumber));
@@ -271,7 +274,14 @@ public class MapFragment extends Fragment implements
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        Snackbar.make(checkNotNull(this.getView(), "View is null"), "剩餘車位: " + mapViewModel.doParkingAvailability(marker.getTitle()), BaseTransientBottomBar.LENGTH_SHORT).show();
+        String title = marker.getTitle();
+        ParkingLotInfoDto parkingLotInfoDto = ParkingLotEntity.toParkingLotInfoDto(parkingLotEntitys.get(title));
+        new XPopup.Builder(getContext())
+                .isDestroyOnDismiss(true) //对于只使用一次的弹窗，推荐设置这个
+                .isViewMode(true)
+                .asCustom(new PagerBottomPopup(getContext(), parkingLotInfoDto, null))
+                .show();
+        Snackbar.make(checkNotNull(this.getView(), "View is null"), "剩餘車位: " + mapViewModel.doParkingAvailability(title), BaseTransientBottomBar.LENGTH_SHORT).show();
     }
 
     public class MyClusterManager<T extends ClusterItem> extends ClusterManager<T> {

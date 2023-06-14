@@ -56,6 +56,7 @@ public class ParkingLotEntity {
         parkingLotInfoDto.setPrice(parkingLotEntity.fareDescription);
         parkingLotInfoDto.setOpeningHours("24 hours");
         parkingLotInfoDto.setIsFavorite(parkingLotEntity.isFavorite);
+        parkingLotInfoDto.setParkingLotId(parkingLotEntity.carParkID);
         return parkingLotInfoDto;
     }
 }

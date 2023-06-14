@@ -10,7 +10,12 @@ public class ParkingLotInfoDto implements Serializable {
     private String price;
     private String openingHours;
     private boolean isFavorite;
+    private String parkingLotId;
 
+
+    public String getParkingLotId() {return parkingLotId;}
+
+    public void setParkingLotId(String parkingLotId) {this.parkingLotId = parkingLotId;}
 
     public String getAddress() {
         return address;

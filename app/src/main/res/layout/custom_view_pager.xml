@@ -33,6 +33,17 @@
                 android:layout_gravity="center"
                 android:background="@null"
         />
+        <Button
+                android:src="@drawable/heart"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:id="@+id/subscription_button"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:background="@android:color/transparent"
+                android:text="訂閱"
+                android:textColor="#ff0000"
+        />
     </LinearLayout>
     <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/pager"
