@@ -7,16 +7,14 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.example.parkinglot.ParkingLotDataBase;
 import com.example.parkinglot.R;
 import com.example.parkinglot.dto.ParkingLotInfoDto;
+import com.example.parkinglot.viewmodels.PageBottomPopupViewModel;
 import com.example.parkinglot.views.adapter.PAdapter;
 import com.lxj.xpopup.core.BottomPopupView;
 import com.lxj.xpopup.util.XPopupUtils;
@@ -30,6 +28,8 @@ public class PagerBottomPopup extends BottomPopupView {
     private ParkingLotInfoDto parkingLotInfoDto;
 
     private ParkingLotRowAdapter parkingLotRowAdapter;
+    private PageBottomPopupViewModel pageBottomPopupViewModel = new PageBottomPopupViewModel();
+
 
     public PagerBottomPopup(@NonNull Context context, ParkingLotInfoDto parkingLotInfoDto, ParkingLotRowAdapter parkingLotRowAdapter) {
         super(context);
@@ -107,9 +107,17 @@ public class PagerBottomPopup extends BottomPopupView {
                 return false;
             }
         });
-//        ViewGroup.MarginLayoutParams params = (MarginLayoutParams) getPopupContentView().getLayoutParams();
-//        params.bottomMargin = 200;
-//        getPopupContentView().setLayoutParams(params);
+
+        Button subscribeButton = findViewById(R.id.subscription_button);
+        subscribeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pageBottomPopupViewModel.doSubscribe(parkingLotInfoDto.getCity(), parkingLotInfoDto.getParkingLotId());
+                pageBottomPopupViewModel.getSubscribeMessage().observe(PagerBottomPopup.this, message -> {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     @Override

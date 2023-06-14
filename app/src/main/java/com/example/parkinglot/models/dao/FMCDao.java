@@ -11,7 +11,7 @@ import java.util.List;
 public interface FMCDao {
 
     @Query("SELECT * FROM FMC")
-    List<FMCEntity> getFMC();
+    FMCEntity getFMC();
 
     @Insert
     void insertFMC(FMCEntity fmcEntity);
