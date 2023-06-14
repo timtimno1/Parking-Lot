@@ -26,14 +26,8 @@ public interface ParkingLotDao {
     @Query("SELECT * FROM parkingLot where parkingLotName = :parkingLotName")
     ParkingLotEntity selectFromName(String parkingLotName);
 
-    @Query("SELECT parkingLotName FROM parkingLot WHERE parkingLotName LIKE :keyword")
-    List<String> searcParkingLotName(String keyword);
-
-    @Query("SELECT city FROM parkingLot WHERE parkingLotName LIKE :keyword")
-    List<String> searcParkingLotCity(String keyword);
-
     @Query("SELECT parkingLotName FROM parkingLot")
-    List<String> defaultParkingLotName();
+    List<String> getAllParkingLotsName();
 
     @Query("SELECT city FROM parkingLot")
     List<String> defaultParkingLotCity();
@@ -76,5 +70,4 @@ public interface ParkingLotDao {
 
     @Query("SELECT * FROM parkingLot WHERE city=:city and parkingLotName not Like :isGround AND isFavorite=:isFavorite")
     List<ParkingLotEntity> getFilterCityAndFavoriteAndNotGround(String city, String isGround, boolean isFavorite);
-
 }
