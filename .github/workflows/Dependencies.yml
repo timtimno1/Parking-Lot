@@ -19,4 +19,4 @@ jobs:
         with:
           gradle-project-path: "."
           gradle-build-module: ":app"
-          gradle-build-configuration: debugCompileClasspath
+          gradle-build-configuration: compileClasspath
