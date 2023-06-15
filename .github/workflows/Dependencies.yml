@@ -19,16 +19,4 @@ jobs:
         with:
           gradle-project-path: "."
           gradle-build-module: ":app"
-          gradle-build-configuration: |-
-            debugCompileClasspath
-          gradle-build-configuration-mapping: |-
-            :library-child-2|compileClasspath
-
-      - name: Root Gradle Dependency Submission
-        uses: mikepenz/gradle-dependency-submission@v0.7.1
-        with:
-          use-gradlew: false
-          gradle-build-module: |-
-            :
-          gradle-build-configuration: |-
-            compileClasspath
+          gradle-build-configuration: debugCompileClasspath
