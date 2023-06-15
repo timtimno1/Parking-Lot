@@ -19,6 +19,8 @@ jobs:
         with:
           gradle-project-path: "."
           gradle-build-module: ":app"
+          gradle-build-configuration: |-
+            debugCompileClasspath
 
       - name: Root Gradle Dependency Submission
         uses: mikepenz/gradle-dependency-submission@main
