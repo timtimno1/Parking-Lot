@@ -14,6 +14,7 @@ public class MapModel {
 
             onParkingLotDataCallBack.onParkingLotDataReady(parkingLotDao.getAll());
         }).start();
+        
     }
 
 }
