@@ -22,18 +22,15 @@ public class  MainActivity extends AppCompatActivity {
 
     private static Context applicationContextInstance = null;
 
-    private TabLayout tabLayout;
-
-    private ViewPager2 viewPager;
-
-    private MainActivityViewModel mainActivityViewModel;
-
     private static final int REQUEST_LOCATION = 1;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        MainActivityViewModel mainActivityViewModel;
+        ViewPager2 viewPager;
+        TabLayout tabLayout;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -46,7 +43,6 @@ public class  MainActivity extends AppCompatActivity {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = findViewById(R.id.context);
         viewPager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), getLifecycle()));
-
         viewPager.setUserInputEnabled(false);
 
         // Give the TabLayout with the ViewPager
@@ -66,6 +62,8 @@ public class  MainActivity extends AppCompatActivity {
                 case 3:
                     tab.setText(R.string.contact_page);
                     break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + position);
             }
         }).attach();
 
