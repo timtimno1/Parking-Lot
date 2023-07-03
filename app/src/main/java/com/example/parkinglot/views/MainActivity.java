@@ -3,20 +3,14 @@ package com.example.parkinglot.views;
 import android.Manifest;
 import android.content.Context;
 import android.util.Log;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 
 import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.example.parkinglot.R;
-import com.example.parkinglot.utils.Preconditions;
 import com.example.parkinglot.viewmodels.MainActivityViewModel;
 import com.example.parkinglot.views.adapter.MainPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
