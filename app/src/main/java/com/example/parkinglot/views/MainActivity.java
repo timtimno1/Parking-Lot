@@ -18,6 +18,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.parkinglot.R;
 import com.example.parkinglot.utils.Preconditions;
 import com.example.parkinglot.viewmodels.MainActivityViewModel;
+import com.example.parkinglot.views.adapter.MainPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -50,7 +51,7 @@ public class  MainActivity extends AppCompatActivity {
 
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         viewPager = findViewById(R.id.context);
-        viewPager.setAdapter(new PagerAdapter(getSupportFragmentManager(), getLifecycle()));
+        viewPager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), getLifecycle()));
 
         viewPager.setUserInputEnabled(false);
 
@@ -83,48 +84,6 @@ public class  MainActivity extends AppCompatActivity {
         }
 
         mainActivityViewModel.doCheck();
-    }
-
-    // inner class
-    private class PagerAdapter extends FragmentStateAdapter {
-
-        private FragmentManager fragmentManager;
-
-        public PagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-            super(fragmentManager, lifecycle);
-            this.fragmentManager = fragmentManager;
-        }
-
-        @NonNull
-        @Override
-        public Fragment createFragment(int position) {
-            Preconditions.checkArgument(position < 4 && position >= 0, "Position must between 1 to 4");
-            // get the current selected tab's position and replace the fragment accordingly
-            Fragment fragment;
-            switch (position) {
-                case 0:
-                    fragment = new MapFragment();
-                    break;
-                case 1:
-                    fragment = new SearchFragment();
-                    break;
-                case 2:
-                    fragment = new FavoriteFragment();
-                    break;
-                case 3:
-                    fragment = new ContactFragment();
-                    break;
-                default:
-                    fragment = null;
-                    break;
-            }
-            return Objects.requireNonNull(fragment);
-        }
-
-        @Override
-        public int getItemCount() {
-            return 4;
-        }
     }
 
     public static Context getApplicationContextInstance() {
