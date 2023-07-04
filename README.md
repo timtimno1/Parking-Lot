@@ -16,9 +16,9 @@
 
 ## Build by android studio
 
-TODO: Finish remaining step
+TODO: Finish the remaining step
 
-## Build by intellij
+## Build by Intellij
 
 1. Please open File -> Project Structure -> project If you don't have corrent-11 version.
 3. Click `Download JDK`
@@ -28,4 +28,4 @@ TODO: Finish remaining step
 
 ![](https://i.imgur.com/qJQmXMB.png)
 
-TODO: Finish remaining step
+TODO: Finish the remaining step
